@@ -1,0 +1,43 @@
+/* THIS FILE WILL BE OVERWRITTEN BY DEV-C++ */
+/* DO NOT EDIT! */
+
+#include <windows.h> // include for version info constants
+
+
+A ICON "DynamicWallpaperTools.ico"
+
+//
+// SUPPORT FOR WINDOWS XP THEMES:
+// THIS WILL MAKE THE PROGRAM USE THE COMMON CONTROLS
+// LIBRARY VERSION 6.0 (IF IT IS AVAILABLE)
+//
+1 24 "DynamicWallpaperTools.exe.Manifest"
+
+//
+// TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
+//
+1 VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "080404E4"
+    {
+      VALUE "CompanyName", ""
+      VALUE "FileVersion", "1.0.0.0"
+      VALUE "FileDescription", "动态壁纸工具 by Office-Excel"
+      VALUE "InternalName", "动态壁纸工具"
+      VALUE "LegalCopyright", "版权所有Office-Excel"
+      VALUE "LegalTrademarks", ""
+      VALUE "OriginalFilename", "DynamicWallpaperTools.exe"
+      VALUE "ProductName", "动态壁纸工具"
+      VALUE "ProductVersion", "1.0.0.0"
+    }
+  }
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0x0804, 1252
+  }
+}
