@@ -149,6 +149,8 @@ DWPTœÓƒø Ù–‘£∫\r\n\
 	}
 }
 extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
+	if(!hInstance) hInstance=GetModuleHandle(0);
+	
 	CONTINUE=true;
 	HFONT hFont;
 	HMODULE hM=LoadLibrary("gdi32.dll");
@@ -176,7 +178,7 @@ extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
 	RegisterClassEx(&wcex);
 	
 	HWND hWnd=CreateWindowEx(WS_EX_ACCEPTFILES, "Help_DWPT", "How to use Dynamic Wallpaper Tools?",
-		WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | DS_FIXEDSYS | DS_3DLOOK | DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG,
+		WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | DS_FIXEDSYS | DS_3DLOOK | DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG,
 		CW_USEDEFAULT, /* x */
 		CW_USEDEFAULT, /* y */
 		1400, /* width */
