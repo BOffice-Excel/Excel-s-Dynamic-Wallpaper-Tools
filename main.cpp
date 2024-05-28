@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <io.h>
 #include <commctrl.h>
+#include <dwmapi.h>
 #define DLLIMPORT __declspec(dllexport)
-#include "C:\Users\ywh11\Desktop\DynamicWallpaper\HelpDWPT\dll.h"
-#pragma comment (lib,"C:\Users\ywh11\Desktop\DynamicWallpaper\HelpDWPT\libHelpDWPT.a") 
+#include "HelpDWPT\dll.h"
+#pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
 //#include "C:\Users\ywh11\Desktop\MyUI\dll.h"
 //#pragma comment (lib,"User32.lib")
 //#pragma comment (lib,"C:\Users\ywh11\Desktop\MyUI\libMyUI.a") 
@@ -55,7 +56,7 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","视频文件（.mp4）\0*.mp4\0视频文件（.mov）\0*.mov\0视频文件（.m4v）\0*.m4v\0视频文件（.mpg）\0*.mpg\0视频文件（.mpeg）\0*.mpeg\0视频文件（.wmv）\0*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（.mp4）\0*.mp4\0視頻檔案（.mov）\0*.mov\0視頻檔案（.m4v）\0*.m4v\0視頻檔案（.mpg）\0*.mpg\0視頻檔案（.mpeg）\0*.mpeg\0視頻檔案（.wmv）\0*.wmv\0所有檔案（*.*）\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic Wallpaper配置文件（.dwp）\0*.dwp\0","Dynamic Wallpaper設定檔（.dwp）\0*.dwp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: No update (null)","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：不更新(null)","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：不更新（null）"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.2","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.2","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.2"},
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
 	{"Wallplaper Config","壁纸配置","桌面配寘"},
@@ -114,8 +115,28 @@ char* GetString4ThisLang(UINT index){
 		}
 	}
 	return MUIText[index][LangID];
-}
+}/*
 
+void ToastMessageBox(char Title[],char SubTitle[],char Msg[]){
+	NOTIFYICONDATAA nid_msg;
+	nid_msg.uTimeout          =       3000;
+    nid_msg.uVersion          =       NIM_SETVERSION;
+    nid_msg.cbSize            =       sizeof(nid_msg);
+    nid_msg.hWnd              =       HWND_;
+    nid_msg.uID               =       0;
+    nid_msg.uFlags            =       NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_INFO;
+    nid_msg.hIcon             =       LoadIcon(NULL, IDI_WARNING);
+    nid_msg.dwInfoFlags       =       NIIF_WARNING;
+    //nid_msg.
+    strcpy(nid_msg.szTip, Title);
+    strcpy(nid_msg.szInfo, SubTitle);
+    strcpy(nid_msg.szInfoTitle, Msg);
+    Shell_NotifyIcon(NIM_ADD, &nid_msg);
+    Shell_NotifyIcon(NIM_SETVERSION, &nid_msg);
+    Sleep(3000);
+    Shell_NotifyIcon(NIM_DELETE, &nid_msg);
+} 
+*/
 LONG GetRegValue(HKEY key,const char path[],const char keyname[],char value[]){//获取注册表的某个值 （无需管理员） 
     HKEY hKey;
     BYTE byData[255];
@@ -216,6 +237,16 @@ char* NumToString(int n){//将数字转换为文本（返回值在RETURN数组中）
 	memset(RETURN,0,sizeof RETURN);
 	if(n==0){
 		RETURN[0]='0';
+		return RETURN;
+	}
+	if(n<0){
+		RETURN[0]='-';
+		int i=GetNumberLength(n);
+		while(n){
+			RETURN[i]=n%10+'0';
+			n/=10;
+			i--;
+		}
 		return RETURN;
 	}
 	int i=GetNumberLength(n)-1;
@@ -874,7 +905,7 @@ LRESULT CALLBACK TrayNotificationCallback(HWND hWnd, UINT uMsg, WPARAM wParam, L
     }
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-
+/*
 DWORD WINAPI nidThread(LPVOID lparam){//系统托盘图标主进程 
 	MSG msg = {};
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -883,7 +914,7 @@ DWORD WINAPI nidThread(LPVOID lparam){//系统托盘图标主进程
     }
     Shell_NotifyIcon(NIM_DELETE, &nid);
 	return 0;
-}
+}*/
 
 int main(int argc,char *argv[]) {//main函数 
 	HMODULE hModule = LoadLibrary("user32.dll");
@@ -953,6 +984,28 @@ int main(int argc,char *argv[]) {//main函数
 		SW_SHOW//定义窗口展示方式，参数传给ShowWindow函数，这里为SW_SHOW
 	);
 }
+/*
+DWORD WINAPI TimeThread(LPVOID lparam){
+	char str[200]="Dynamic Wallpaper Tools";
+	while(true){
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+		strcpy(str,"Dynamic Wallpaper Tools Date: ");
+		strcat(str,NumToString(st.wYear));
+		strcat(str,"/");
+		strcat(str,NumToString(st.wMonth));
+		strcat(str,"/");
+		strcat(str,NumToString(st.wDay));
+		strcat(str," Time: ");
+		strcat(str,NumToString(st.wHour));
+		strcat(str,":");
+		strcat(str,NumToString(st.wMinute));
+		strcat(str,":");
+		strcat(str,NumToString(st.wSecond));
+		strcat(str,((LangID==0)?" Language: English":((LangID==1)?" 语言: 中文简体":" 語言：中文繁體"))); 
+		SetWindowText(HWND_,str);
+	}
+}*/
 
 /* The 'main' function of Win32 GUI programs: this is where execution starts */
 int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In_ LPSTR lpCmdLine,_In_ int nShowCmd) {
@@ -960,6 +1013,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
 	SetProcessDPIAwarev();//清晰！！！ 
 	//LoadUI();
+	
+	//ToastMessageBox("Dynamic Wallpaper Tools","^_^","程序已启动完成，请不要二次运行");
 	
 	HInstance = GetModuleHandle(NULL);
 	WNDCLASS wc1 = {};
@@ -981,7 +1036,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
     strcpy(nid.szTip,"Dynamic Wallpaper Tools");
     Shell_NotifyIcon(NIM_ADD,&nid);
     
-    CreateThread(NULL,NULL,nidThread,NULL,NULL,NULL);//启动线程 
+    //CreateThread(NULL,NULL,nidThread,NULL,NULL,NULL);//启动线程 
     Sleep(200);
     
 	MSG msg; /* A temporary location for all messages */
@@ -995,7 +1050,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	wc.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wc.hbrBackground = CreateSolidBrush(RGB(240,240,240))/*(HBRUSH)(COLOR_WINDOW + 1)*/;
 	wc.lpszClassName = "DWPT_PRIVATECLASS";
 	wc.hIcon = LoadIcon(hINstance,"A"); /* Load a standard icon */
 	wc.hIconSm = LoadIcon(hINstance,"A"); /* use the name "A" to use the project icon */
@@ -1037,6 +1092,15 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		return 0;
 	}
 	
+	MENUINFO menuInfo={0};
+	menuInfo.cbSize=sizeof(MENUINFO);
+	menuInfo.fMask=MIM_BACKGROUND;
+	menuInfo.hbrBack=CreateSolidBrush(RGB(44,44,44));
+	SetMenuInfo(GetMenu(HWND_),&menuInfo);
+	DrawMenuBar(HWND_);
+	SendMessage(HWND_, WM_MENUSELECT, (WPARAM)menu, MAKELPARAM(0, MF_BYPOSITION));
+	DeleteObject(menuInfo.hbrBack);
+	
 	//CreateWindow("Button","BUTTON",WS_CHILD|WS_VISIBLE,20,200,100,100,HWND_,NULL,NULL,NULL); 
 	TCITEM tie;
     LRESULT count, id;
@@ -1050,7 +1114,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		if(i==0){
 			hConfig=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			for(int i=0;i<5;i++){//记住：Dev C++编译时要在 项目[P] -> 项目属性[O] 里面选中"支持 Windows XP 主题"，否则难看到去世！！！ 
-				HWND hwnd=CreateWindow("Button",GetString4ThisLang(i)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE,BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,hConfig,(HMENU)BtnWparam[i],NULL,NULL);
+				HWND hwnd=CreateWindow("Button",GetString4ThisLang(i)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE|BS_COMMANDLINK,BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,hConfig,(HMENU)BtnWparam[i],NULL,NULL);
 				//CreateButton(BtnName[i],BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,HWND_,(HMENU)BtnWparam[i],NULL,NULL);
 				SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			}
@@ -1068,7 +1132,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			strcat(str,RETURN);
 			hStaticDef=CreateWindow("STATIC",str,WS_CHILD|WS_VISIBLE,20,60,660,25,hSet,(HMENU)100,NULL,NULL);
 			SendMessage(hStaticDef,WM_SETFONT,(WPARAM)hFont,NULL);
-			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
+			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 
 		}
@@ -1088,11 +1152,19 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	*/
 	
 	ShowWindow(HWND_, nShowCmd);//展示窗口（也可以是在静态启动时隐藏窗口） 
-	UpdateWindow(HWND_);
+	UpdateWindow(HWND_);//更新窗口 
+	
+	//CreateThread(NULL,NULL,TimeThread,NULL,NULL,NULL);
+	
+	DWORD dwAttribute = 20;/*DWMWA_USE_IMMERSIVE_DARK_MODE;*/ // 设置暗色模式属性
+	BOOL bValue = TRUE; // 启用暗色模式
+	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // 设置窗口属性
+	
 	while (GetMessage(&msg, NULL, 0, 0) > 0) { /* If no error is received... */
 		TranslateMessage(&msg); /* Translate key codes to chars if present */
 		DispatchMessage(&msg); /* Send it to WndProc */
 	}//主循环 
 	
+    Shell_NotifyIcon(NIM_DELETE, &nid);
 	return (int)msg.wParam;//返回值 
 }
