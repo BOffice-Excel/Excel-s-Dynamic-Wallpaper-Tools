@@ -6,6 +6,7 @@
 #define DLLIMPORT __declspec(dllexport)
 #include "HelpDWPT\dll.h"
 #pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
+#define key_press(key) ((GetAsyncKeyState(key)&0x8000)?1:0)//定义按键检测函数 
 //#include "C:\Users\ywh11\Desktop\MyUI\dll.h"
 //#pragma comment (lib,"User32.lib")
 //#pragma comment (lib,"C:\Users\ywh11\Desktop\MyUI\libMyUI.a") 
@@ -35,9 +36,10 @@ WNDCLASSEX wc; //窗口类，创建窗口时需要注册一个类才可以创建窗口，否则报错
 char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145];//一堆的字符串，大多都是临时的、在StartDwp函数中使用 
 DWORD dw/*打开文件时的标记*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*记住所有按钮状态*/;
 HANDLE hFile;//文件句柄 
+HDC hdc=GetDC(0);
 int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/,LangID=-1;
 bool quietMode=false;//是否启用安静模式（在启动dwp文件中） 
-HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hStaticDef;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
+HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATA nid;//托盘图标数据 
 HMENU FileMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
@@ -52,7 +54,7 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Stop Wallpaper","停止动态壁纸","停止動態桌面"},
 	{"About Dynamic Wallpaper Tools","关于Dynamic Wallpaper Tools","關於Dynamic Wallpaper Tools"},
 	{"Unable to open the video display program \"mshta.exe\" (playing videos using a browser), please check if the program exists in the system directory","无法打开视频显示程序\"mshta.exe\"（使用浏览器播放视频），请检查系统目录下程序是否存在","無法打開視頻顯示程式\"mshta.exe\"（使用瀏覽器播放視頻），請檢查系統目錄下程式是否存在"},
-	{"Warning! This operation will terminate all mshta.exe processes. Do you want to continue?","警告！此操作会终止所有mshta.exe进程，是否继续？","警告！此操作會終止所有mshta.exe行程，是否繼續？"},
+	{"Warning! This operation will close all windows under the class name \"Program\"!","警告！此操作会关闭所有在类名为“Progman”的窗口下的所有窗口！","警告！ 此操作會關閉所有在類名為“Progman”的視窗下的所有視窗"},
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","视频文件（.mp4）\0*.mp4\0视频文件（.mov）\0*.mov\0视频文件（.m4v）\0*.m4v\0视频文件（.mpg）\0*.mpg\0视频文件（.mpeg）\0*.mpeg\0视频文件（.wmv）\0*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（.mp4）\0*.mp4\0視頻檔案（.mov）\0*.mov\0視頻檔案（.m4v）\0*.m4v\0視頻檔案（.mpg）\0*.mpg\0視頻檔案（.mpeg）\0*.mpeg\0視頻檔案（.wmv）\0*.wmv\0所有檔案（*.*）\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic Wallpaper配置文件（.dwp）\0*.dwp\0","Dynamic Wallpaper設定檔（.dwp）\0*.dwp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},
@@ -65,11 +67,11 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Current default item:","当前默认项：","當前默認項："},
 	{"Edit","编辑","編輯"},
 	{"Registry modification failed!","注册表修改失败！","註冊表修改失敗！"},
-	{"Do you want to restart dwm.exe? This may result in a black screen for a while. If Win11 users set a right angle, it will turn back into a rounded corner. Please make a careful decision!","是否需要重启dwm.exe？这可能会黑屏一会儿，Win11用户如果设置了直角会变回圆角，请慎重决定！","是否需要重啓dwm.exe？ 這可能會黑屏一會兒，Win11用戶如果設定了直角會變回圓角，請慎重决定！"},
+	{"Do you want to restart explorer.exe? This may result in a black screen for a while. If Win11 users set a right angle, it will turn back into a rounded corner. Please make a careful decision!","是否需要重启explorer.exe？这可能会黑屏一会儿，Win11用户如果设置了直角会变回圆角，请慎重决定！","是否需要重啓explorer.exe？ 這可能會黑屏一會兒，Win11用戶如果設定了直角會變回圓角，請慎重决定！"},
 	{"Quit(&Q)","退出（&Q）","退出（&Q）"},
 	{"Registry modification completed!","注册表修改完成！","註冊表修改完成！"},
 	{"Do you need to set this configuration item as the default (including startup default)：","是否需要将这个配置项设置为默认项（包括启动默认项）：","是否需要將這個配寘項設定為默認項（包括啟動默認項）："},
-	{"dwm.exe has been restarted and completed, you can continue your work now!","dwm.exe已重启完成，您可以继续您的工作了！","dwm.exe已重啓完成，您可以繼續您的工作了！"},
+	{"explorer.exe has been restarted and completed, you can continue your work now!","explorer.exe已重启完成，您可以继续您的工作了！","explorer.exe已重啓完成，您可以繼續您的工作了！"},
 	{"Apply","应用","應用"},
 	{"Set as default configuration","设置为默认配置","設定為默認配寘"},
 	{"Help(&H)","帮助（&H）","幫助（&H）"},
@@ -91,7 +93,8 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Do you want to save this modification?","是否要保存这次的修改？","是否要保存這次的修改？"},
 	{"Do you want to apply it now?","是否要立即应用： ","是否要立即應用？"},
 	{"Shrink to system tray","缩小到系统托盘","縮小到系統託盤"},
-	{"How to use it?","如何使用？","如何使用？"}
+	{"How to use it?","如何使用？","如何使用？"},
+	{"Advanced Options","高级选项","高級選項"}
 };
 
 //left->top->right->bottom
@@ -108,7 +111,7 @@ char* StringCat(char *Str1,const char *Str2){
 
 char* GetString4ThisLang(UINT index){
 	if(LangID==-1){
-		switch(PRIMARYLANGID(GetSystemDefaultLangID())){//获取语言ID并设置当前语言 
+		switch(PRIMARYLANGID(GetUserDefaultLangID())){//获取语言ID并设置当前语言 
 			case LANG_CHINESE_SIMPLIFIED:LangID=IL_Simplified_Chinese;break;
 			case LANG_CHINESE_TRADITIONAL:LangID=IL_Traditional_Chinese;break;
 			default:LangID=IL_ENGLISH;break;
@@ -215,10 +218,6 @@ BOOL CALLBACK EnumWindowProc(_In_ HWND hwnd, _In_ LPARAM Lparam)//核心！！！动态
     if (hDefView != 0) {
         HWND hWorkerw = FindWindowEx(0, hwnd, "WorkerW", 0);
         HWND SCREEN = FindWindowEx(hWorkerw,0,"SysListView32",0);
-        RECT rect;
-        GetWindowRect(SCREEN,&rect);
-        H=rect.bottom;
-        W=rect.right;
         ShowWindow(hWorkerw, SW_HIDE);
         return FALSE;
     }
@@ -299,19 +298,52 @@ bool SaveFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[],const ch
 	if (((Output_Path)[i]) == '\\') strcat((Output_Path),(char*)"."), strcat((Output_Path), (char*)typestr);//判定是否有后缀名，没有就加一个默认的 
 	return true;//成功！ 
 }
+
+BOOL CALLBACK StopDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam){
+	char Text[1145];
+	GetClassName(hWnd,Text,sizeof(Text));
+	//GetWindowText(hWnd,Text,GetWindowTextLength(hWnd)+1);
+	if(strcmp(Text,"SHELLDLL_DefView")!=0) PostMessage(hWnd,WM_CLOSE,NULL,NULL);
+	return FALSE;
+}
+
+/*BOOL CALLBACK OutDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam){
+	char Text[1145];
+	GetClassName(hWnd,Text,sizeof(Text));
+	//GetWindowText(hWnd,Text,GetWindowTextLength(hWnd)+1);
+	if(strcmp(Text,"SHELLDLL_DefView")!=0) PostMessage(hWnd,WM_CLOSE,NULL,NULL);
+	return TRUE;
+}*/
+
+void PutToDesktop(HWND Wallpaper){
+	if(!Wallpaper){
+		MessageBox(Wallpaper,"将桌面放进桌面里？你在这套娃呢","Error",MB_ICONINFORMATION|MB_OK);
+		return ;
+	}
+	int width=GetDeviceCaps(GetDC(0), DESKTOPHORZRES),height=GetDeviceCaps(GetDC(0), DESKTOPVERTRES);//获取屏幕设备分辨率 
+	HWND hProgman = FindWindow("Progman", 0), hFfplay = Wallpaper;
+	SendMessageTimeout(hProgman, 0x52C, 0, 0, 0, 100, 0);//延时发送消息 
+	SetWindowPos(hFfplay, NULL, 0, 0, width, height, SWP_NOZORDER);//设置窗口大小和位置 
+	SetParent(hFfplay, hProgman);//设置父窗口 
+	EnumWindows(EnumWindowProc, 0);//将这个窗口放到桌面的后边 
+	return ;
+}
+
 DWORD WINAPI DwpThread(LPVOID lparam){//核心线程 
 	if((!quietMode)&&MessageBox(NULL,GetString4ThisLang(6),"Warning",MB_YESNO|MB_ICONWARNING)!=6) return 0; //警告 
 	char cmd[1145]=" \"",sound,VP[1145],TmpPath[MAX_PATH+20],str1[MAX_PATH*4];//初始化一堆文本 
 	STARTUPINFO si = {0};
 	PROCESS_INFORMATION pi = {0};//设置启动进程的结构体 
+	HWND PROGMAN=FindWindow("Progman", 0);
+	if(PROGMAN) EnumChildWindows(PROGMAN,StopDWPProc,NULL);
 	
-	SHELLEXECUTEINFO sei = {0};
+	/*SHELLEXECUTEINFO sei = {0};
     sei.cbSize = sizeof(SHELLEXECUTEINFO);
     sei.fMask = SEE_MASK_NOCLOSEPROCESS;
     sei.lpFile = "taskkill.exe";
     sei.nShow = SW_HIDE;
     sei.lpParameters = "/F /IM mshta.exe";
-    if (ShellExecuteEx(&sei)) CloseHandle(sei.hProcess);//启动并结束mshta.exe 
+    if (ShellExecuteEx(&sei)) CloseHandle(sei.hProcess);//启动并结束mshta.exe */
     
 	strcpy(str1,"<html>\
 <META http-equiv=\"content-type\" content=\"text/html; charset=GBK\">\
@@ -337,7 +369,6 @@ DWORD WINAPI DwpThread(LPVOID lparam){//核心线程
 	printf("%s",str1);
 	fclose(stdout);//退出写入 
 	
-	int width=GetDeviceCaps(GetDC(0), DESKTOPHORZRES),height=GetDeviceCaps(GetDC(0), DESKTOPVERTRES);//获取屏幕设备分辨率 
 	memset(&si,NULL,sizeof si);
 	memset(&pi,NULL,sizeof pi);
     strcat(cmd,TmpPath);
@@ -351,12 +382,7 @@ DWORD WINAPI DwpThread(LPVOID lparam){//核心线程
 	}
 	
 	while(FindWindow("HTML Application Host Window Class", 0)==NULL) Sleep(500);//找mshta的窗口 
-	HWND hProgman = FindWindow("Progman", 0), hFfplay = FindWindow("HTML Application Host Window Class", 0);
-	SendMessageTimeout(hProgman, 0x52C, 0, 0, 0, 100, 0);//延时发送消息 
-	SetWindowPos(hFfplay, NULL, 0, 0, width, height, SWP_NOZORDER);//设置窗口大小和位置 
-	SetParent(hFfplay, hProgman);//设置父窗口 
-	EnumWindows(EnumWindowProc, 0);//将这个窗口放到桌面的后边 
-	
+	PutToDesktop(FindWindow("HTML Application Host Window Class", 0));
 	return 0;
 }
 bool isRunningAsAdmin() {//判定是否在管理员身份下运行 
@@ -390,6 +416,59 @@ bool runAsAdmin() {//在管理员身份中运行
  	ExitProcess(0);
  	return false;
 }
+DWORD WINAPI FindWindowProcess(LPVOID lparam){
+	SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(HInstance,"IDI_SELECTUSING"));
+	ChooseWindow=0;
+	POINT cur;
+	HCURSOR hCursor=LoadCursor(HInstance,"IDC_SELECTCURSOR");
+	HWND Find;
+	RECT rect,DRect;
+	char str[1145];
+	HBRUSH GBrush=CreateSolidBrush(RGB(0,255,0));
+	while(!key_press(VK_LBUTTON)){
+        SetCursor(hCursor);
+		GetCursorPos(&cur);
+		Find=WindowFromPoint(cur);
+		while(GetParent(Find)) Find=GetParent(Find);
+		if(Find!=ChooseWindow){
+			//RedrawWindow(0,NULL,NULL,RDW_ERASE);
+			if(ChooseWindow){
+				GetWindowRect(ChooseWindow,&rect);
+				BitBlt(hdc,rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top,hdc,rect.left,rect.top,DSTINVERT);
+			}
+			ChooseWindow=Find;
+			GetWindowRect(ChooseWindow,&rect);
+			BitBlt(hdc,rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top,hdc,rect.left,rect.top,DSTINVERT);
+			/*DRect.left=rect.left-5;
+			DRect.top=rect.top-5;
+			DRect.bottom=rect.bottom+5;
+			DRect.right=rect.left;
+			FillRect(hdc,&DRect,GBrush);
+			DRect.bottom=rect.top;
+			DRect.right=rect.right+5;
+			FillRect(hdc,&DRect,GBrush);
+			DRect.bottom=rect.bottom+5;
+			DRect.top=rect.bottom;
+			FillRect(hdc,&DRect,GBrush);
+			DRect.left=rect.right;
+			DRect.right=rect.right+5;
+			DRect.top=rect.top-5;
+			DRect.bottom=rect.bottom+5;
+			FillRect(hdc,&DRect,GBrush);*/
+			char Text[1145];
+			strcpy(str,"窗口标题：");
+			GetWindowText(ChooseWindow,Text,GetWindowTextLength(ChooseWindow)+1);
+			strcat(str,Text);
+			SetDlgItemText(hAnyWindow,1,str);
+			strcpy(str,"窗口类名：");
+			GetClassName(ChooseWindow,Text,sizeof(Text));
+			strcat(str,Text);
+			SetDlgItemText(hAnyWindow,2,str);
+		}
+	}
+	SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(HInstance,"IDI_SELECTUNUSE"));
+	//RedrawWindow(0,NULL,NULL,RDW_ERASE);
+} 
 void StartDwp(const char PathA[],bool Quiet){//创建启动Dwp进程 
 	quietMode=Quiet;
 	strcpy(Path,PathA);
@@ -691,11 +770,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				}
 				case 5:{//结束动态壁纸（暴力） 
 					if(MessageBox(hwnd,GetString4ThisLang(6),"Warning",MB_ICONWARNING|MB_YESNO)==6){
-						system("taskkill /F /IM mshta.exe");
+						HWND PROGMAN=FindWindow("Progman", 0);
+						if(PROGMAN) EnumChildWindows(PROGMAN,StopDWPProc,NULL);
 						if(MessageBox(hwnd,GetString4ThisLang(19),"Stop Dynamic Wallpaper",MB_ICONQUESTION|MB_YESNO)==6){
-							system("taskkill /F /IM dwm.exe");
-							system("dwm.exe");
-							MessageBox(hwnd,GetString4ThisLang(23),"Restart dwm.exe complete",MB_ICONINFORMATION); 
+							system("taskkill /F /IM explorer.exe");
+							Sleep(1000);
+							system("timeout /T 5&explorer.exe");
+							MessageBox(hwnd,GetString4ThisLang(23),"Restart explorer.exe complete",MB_ICONINFORMATION); 
 						}
 					}
 					break;
@@ -846,6 +927,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					HelpWindow(HInstance,hwnd);
 					break;
 				} 
+				case 13:{
+					CreateThread(NULL,NULL,FindWindowProcess,NULL,NULL,NULL);
+					break;
+				}
+				case 14:{
+					if(ChooseWindow==0||ChooseWindow==HWND_||(!IsWindowVisible(HWND_))||IsIconic(HWND_)) MessageBox(hwnd,"未选择一个正确的窗口，无法设置为背景！","Error",MB_ICONWARNING);
+					else{
+						char Text[1145];
+						GetClassName(ChooseWindow,Text,sizeof(Text));
+						if(strcmp(Text,"WorkerW")==0||strcmp(Text,"Progman")==0||strcmp(Text,"Shell_TrayWnd")==0) MessageBox(hwnd,"未选择一个正确的窗口，无法设置为背景！","Error",MB_ICONWARNING);
+						else if(MessageBox(hwnd,GetString4ThisLang(6),"Warning",MB_ICONWARNING|MB_YESNO)==6){
+							HWND PROGMAN=FindWindow("Progman", 0);
+							if(PROGMAN) EnumChildWindows(PROGMAN,StopDWPProc,NULL);
+							PutToDesktop(ChooseWindow);
+						}
+					}
+					break;
+				}
 			}
 			break;
 		}
@@ -860,11 +959,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					LRESULT result=SendMessage(hTab,TCM_GETCURSEL,NULL,NULL); 
 					if(result==0){
 						ShowWindow(hSet,SW_HIDE);
+						ShowWindow(hAnyWindow,SW_HIDE);
 						ShowWindow(hConfig,SW_SHOW);
+					}
+					else if(result==1){
+						ShowWindow(hConfig,SW_HIDE);
+						ShowWindow(hAnyWindow,SW_HIDE);
+						ShowWindow(hSet,SW_SHOW);
 					}
 					else{
 						ShowWindow(hConfig,SW_HIDE);
-						ShowWindow(hSet,SW_SHOW);
+						ShowWindow(hAnyWindow,SW_SHOW);
+						ShowWindow(hSet,SW_HIDE);
 					}
 					break;
 				}
@@ -1052,7 +1158,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
 	wc.hbrBackground = CreateSolidBrush(RGB(240,240,240))/*(HBRUSH)(COLOR_WINDOW + 1)*/;
 	wc.lpszClassName = "DWPT_PRIVATECLASS";
-	wc.hIcon = LoadIcon(hINstance,"A"); /* Load a standard icon */
+	wc.hIcon = LoadIcon(hINstance,"IDI_SELECTUNUSE"); /* Load a standard icon */
 	wc.hIconSm = LoadIcon(hINstance,"A"); /* use the name "A" to use the project icon */
 
 	if (!RegisterClassEx(&wc)) {
@@ -1108,9 +1214,15 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
     hTab = CreateWindow("SysTabControl32", NULL, WS_CHILD | WS_VISIBLE,
         0, 0, 800, 400, HWND_,(HMENU) 13, NULL, NULL);//创建Tab Control
     SendMessage(hTab,WM_SETFONT,(WPARAM)hFont,NULL);
-    for(int i=0;i<2;i++){//创建两个窗口和控件 
+	
+	DWORD dwAttribute = 20;/*DWMWA_USE_IMMERSIVE_DARK_MODE;*/ // 设置暗色模式属性
+	BOOL bValue = TRUE; // 启用暗色模式
+	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // 设置窗口属性
+	
+    for(int i=0;i<3;i++){//创建两个窗口和控件 
 		tie.mask = TCIF_TEXT;
-	    tie.pszText = GetString4ThisLang(13+i);//获取语言文本 
+	    if(i<2) tie.pszText = GetString4ThisLang(13+i);//获取语言文本 
+	    else tie.pszText=GetString4ThisLang(46);
 		if(i==0){
 			hConfig=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			for(int i=0;i<5;i++){//记住：Dev C++编译时要在 项目[P] -> 项目属性[O] 里面选中"支持 Windows XP 主题"，否则难看到去世！！！ 
@@ -1120,7 +1232,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			}
 			ShowWindow(hConfig,SW_SHOW);
 		}
-		else{
+		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			HWND hwnd=CreateWindow("button",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,760,25,hSet,(HMENU)10,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
@@ -1132,9 +1244,24 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			strcat(str,RETURN);
 			hStaticDef=CreateWindow("STATIC",str,WS_CHILD|WS_VISIBLE,20,60,660,25,hSet,(HMENU)100,NULL,NULL);
 			SendMessage(hStaticDef,WM_SETFONT,(WPARAM)hFont,NULL);
+			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
+			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","老板键：",WS_CHILD|WS_VISIBLE,20,100,100,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","设置",WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)13,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 
+		}
+		else{
+			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
+			ShowWindow(hAnyWindow,SW_HIDE);
+			SendMessage(CreateWindowEx(0,"BUTTON","将任意窗口设置为壁纸",WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			hsti=CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
+			SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(hINstance,"IDI_SELECTUNUSE"));
+			SendMessage(CreateWindowEx(0,"STATIC","窗口标题：",WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
+				(WPARAM)CreateFont(20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("思源")),NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","窗口类名：",WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","设置",WS_CHILD|WS_VISIBLE,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
 	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);
@@ -1155,10 +1282,6 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	UpdateWindow(HWND_);//更新窗口 
 	
 	//CreateThread(NULL,NULL,TimeThread,NULL,NULL,NULL);
-	
-	DWORD dwAttribute = 20;/*DWMWA_USE_IMMERSIVE_DARK_MODE;*/ // 设置暗色模式属性
-	BOOL bValue = TRUE; // 启用暗色模式
-	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // 设置窗口属性
 	
 	while (GetMessage(&msg, NULL, 0, 0) > 0) { /* If no error is received... */
 		TranslateMessage(&msg); /* Translate key codes to chars if present */

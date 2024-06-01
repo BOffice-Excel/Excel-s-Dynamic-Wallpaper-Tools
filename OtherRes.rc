@@ -1,0 +1,4 @@
+#include <windows.h>
+IDI_SELECTUNUSE ICON "Resource\\1.ico"
+IDI_SELECTUSING ICON "Resource\\2.ico"
+IDC_SELECTCURSOR CURSOR "Resource\\3.cur"
