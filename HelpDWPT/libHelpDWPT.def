@@ -1,3 +1,4 @@
 EXPORTS
-    HelpWindow = HelpWindow@8 @1
-    HelpWindow@8 @2
+    HelpWindow = HelpWindow@4 @1
+    HelpWindow@4 @2
+    WinWatcher @3

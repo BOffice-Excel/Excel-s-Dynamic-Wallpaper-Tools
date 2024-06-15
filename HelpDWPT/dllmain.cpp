@@ -1,15 +1,30 @@
 /* Replace "dll.h" with the name of your header */
 #define DLLIMPORT __declspec(dllexport)
 #include <windows.h>
+#include <stdio.h>
 #include "dll.h"
+#define key_press(key) ((GetAsyncKeyState(key)&0x8000)?1:0)//定义按键检测函数 
 typedef BOOL WINAPI (*SPDA)(VOID);
-typedef HFONT WINAPI (*CreateFontP)(int,int,int,int,int,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,DWORD,LPCSTR);
 SPDA SetProcessDPIAwarev;
-CreateFontP CreateFontL;
 #pragma comment (lib,"libgdiplus.a")
 #pragma comment (lib,"libgdi32.a")
+#define IDC_SLTBTN 1
+#define IDC_TEXT 2
+#define IDC_CLSNAME 3
+#define IDC_PARENT 4
+#define IDC_HANDLE 5
+#define IDC_WNDBOX 6
+#define IDC_STYLE 7
+#define IDC_EXSTYLE 8
+#define IDC_CLSSYE 9
+#define IDC_HCURSOR 10
+#define IDC_PROCESSID 11
+#define IDC_MSGWTR 12
 //HFONT hFont = CreateFont(25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("思源"));//默认字体 
-bool CONTINUE=true;
+HWND hWND,ChooseWindow;
+HDC hdc=GetDC(0);
+HFONT hFont1;
+HINSTANCE hinst;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 	switch(msg){
 		case WM_CREATE:{
@@ -148,16 +163,9 @@ DWPT项目属性：\r\n\
 		default:return DefWindowProc(hWnd,msg,wParam,lParam);
 	}
 }
-extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
-	if(!hInstance) hInstance=GetModuleHandle(0);
-	
-	CONTINUE=true;
+extern "C" DLLIMPORT void HelpWindow(HWND hwnd){
 	HFONT hFont;
-	HMODULE hM=LoadLibrary("gdi32.dll");
-	if(hM){
-		CreateFontL=(CreateFontP)GetProcAddress(hM,"CreateFontA");
-		if(CreateFontL) hFont=CreateFontL(18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("黑体细体"));
-	}
+	hFont=CreateFont(18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("黑体细体"));
 	
 	HMODULE hModule = LoadLibrary("user32.dll");
 	SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
@@ -167,9 +175,9 @@ extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
 	memset(&wcex,0,sizeof wcex);
 	MSG msg;
 	wcex.cbSize=sizeof(WNDCLASSEX);
-	wcex.hInstance=hInstance;
+	wcex.hInstance=hinst;
 	wcex.lpszClassName="Help_DWPT";
-	wcex.hIcon=LoadIcon(hInstance,"A")/*LoadIcon(NULL,IDI_QUESTION)*/; 
+	wcex.hIcon=LoadIcon(NULL,IDI_QUESTION)/*LoadIcon(NULL,IDI_QUESTION)*/; 
 	wcex.hIconSm=wcex.hIcon /*LoadIcon(NULL,IDI_QUESTION)*/; 
 	wcex.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 	wcex.lpfnWndProc=WndProc;
@@ -182,7 +190,7 @@ extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
 		CW_USEDEFAULT, /* x */
 		CW_USEDEFAULT, /* y */
 		1400, /* width */
-		800/*60*/, /* height */
+		750/*60*/, /* height */
 		hwnd, NULL, wcex.hInstance, NULL);//创建窗口 
 	
 	if(!hWnd){
@@ -209,9 +217,152 @@ extern "C" DLLIMPORT void HelpWindow(HINSTANCE hInstance,HWND hwnd){
 	EnableWindow(hwnd,true);
 	return;
 }
+DWORD WINAPI FindWindowProcess(LPVOID lparam){
+	//MessageBox(NULL,NULL,NULL,NULL);
+	SendDlgItemMessage(hWND,1,BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(GetModuleHandle(0),"IDI_SELECTUSING"));
+	ChooseWindow=0;
+	POINT cur;
+	HCURSOR hCursor=LoadCursor(GetModuleHandle(0),"IDC_SELECTCURSOR");
+	HWND Find;
+	RECT rect,DRect;
+	char str[1145];
+	//HBRUSH GBrush=CreateSolidBrush(RGB(0,255,0));
+	while(key_press('S')&&key_press('C')&&(key_press(VK_LCONTROL)||key_press(VK_RCONTROL))){
+        SetCursor(hCursor);
+		GetCursorPos(&cur);
+		Find=WindowFromPoint(cur);
+		if(Find!=ChooseWindow){
+			if(ChooseWindow){
+				GetWindowRect(ChooseWindow,&rect);
+				BitBlt(hdc,rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top,hdc,rect.left,rect.top,DSTINVERT);
+			}
+			ChooseWindow=Find;
+			GetWindowRect(ChooseWindow,&rect);
+			BitBlt(hdc,rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top,hdc,rect.left,rect.top,DSTINVERT);
+			char Text[1145];
+			GetWindowText(ChooseWindow,Text,GetWindowTextLength(ChooseWindow)+1);
+			SetDlgItemText(hWND,IDC_TEXT,Text);
+			GetClassName(ChooseWindow,Text,sizeof(Text));
+			SetDlgItemText(hWND,IDC_CLSNAME,Text);
+			sprintf(Text,"0x%p",GetParent(Find));
+			SetDlgItemText(hWND,IDC_PARENT,Text);
+			
+			RECT rect;
+			GetWindowRect(Find,&rect);
+			sprintf(Text,"left:%d top:%d bottom:%d right:%d",rect.left,rect.top,rect.bottom,rect.right);
+			SetDlgItemText(hWND,IDC_WNDBOX,Text);
+			
+			sprintf(Text,"0x%p",Find);
+			SetDlgItemText(hWND,IDC_HANDLE,Text);
+			sprintf(Text,"0x%p",GetWindowLong(Find,GWL_STYLE));
+			SetDlgItemText(hWND,IDC_STYLE,Text);
+			sprintf(Text,"0x%p",GetWindowLong(Find,GWL_EXSTYLE));
+			SetDlgItemText(hWND,IDC_EXSTYLE,Text);
+			sprintf(Text,"0x%p",GetClassLong(Find,GCL_STYLE));
+			SetDlgItemText(hWND,IDC_CLSSYE,Text);
+			sprintf(Text,"0x%p",GetClassLong(Find,GCL_HCURSOR));
+			SetDlgItemText(hWND,IDC_HCURSOR,Text);
+			DWORD dw;
+			GetWindowThreadProcessId(Find,&dw);
+			sprintf(Text,"0x%p",dw);
+			SetDlgItemText(hWND,IDC_PROCESSID,Text);
+		}
+	}
+	SendDlgItemMessage(hWND,1,BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(GetModuleHandle(0),"IDI_SELECTUNUSE"));
+} 
+
+LRESULT CALLBACK WWatcherProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
+	switch(msg){
+		case WM_CREATE:{
+			SendMessage(CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON,50,50,70,70,hWnd,(HMENU)IDC_SLTBTN,NULL,NULL),BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(GetModuleHandle(0),"IDI_SELECTUNUSE"));
+			SendMessage(CreateWindowEx(0,"STATIC","使用窗口选择器时按住Ctrl+C+S不放即可选择窗口，松开即选中该窗口",WS_CHILD|WS_VISIBLE,150,70,600,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","窗口标题：",WS_CHILD|WS_VISIBLE,50,140,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","窗口类名：",WS_CHILD|WS_VISIBLE,50,170,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","父窗口：",WS_CHILD|WS_VISIBLE,50,200,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","窗口句柄：",WS_CHILD|WS_VISIBLE,50,230,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","高宽左顶：",WS_CHILD|WS_VISIBLE,50,260,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","窗口样式：",WS_CHILD|WS_VISIBLE,50,290,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","扩展样式：",WS_CHILD|WS_VISIBLE,50,310,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","类样式：",WS_CHILD|WS_VISIBLE,50,340,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","光标句柄：",WS_CHILD|WS_VISIBLE,50,370,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC","进程ID：",WS_CHILD|WS_VISIBLE,50,400,120,25,hWnd,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,140,750,25,hWnd,(HMENU)IDC_TEXT,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,170,750,25,hWnd,(HMENU)IDC_CLSNAME,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,200,750,25,hWnd,(HMENU)IDC_PARENT,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,230,750,25,hWnd,(HMENU)IDC_HANDLE,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,260,750,25,hWnd,(HMENU)IDC_WNDBOX,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,290,750,25,hWnd,(HMENU)IDC_STYLE,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,310,750,25,hWnd,(HMENU)IDC_EXSTYLE,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,340,750,25,hWnd,(HMENU)IDC_CLSSYE,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,370,750,25,hWnd,(HMENU)IDC_HCURSOR,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,400,750,25,hWnd,(HMENU)IDC_PROCESSID,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","启动窗口信息监听器（未使用）",WS_CHILD|WS_VISIBLE|BS_ICON,710,80,215,40,hWnd,(HMENU)IDC_MSGWTR,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			//SendDlgItemMessage(hWND,0,WM_SETFONT,(WPARAM)hFont1,NULL);
+			break;
+		}
+		case WM_COMMAND:{
+			switch(LOWORD(wParam)){
+				case IDC_SLTBTN:{
+					CreateThread(NULL,NULL,FindWindowProcess,NULL,NULL,NULL); 
+					break;
+				}
+				case IDC_MSGWTR:{
+					
+					break;
+				}
+			}
+			break;
+		}
+		case WM_CLOSE:
+		case WM_DESTROY:{
+			PostQuitMessage(0); 
+			ShowWindow(hWnd,SW_HIDE); 
+			return 0;
+		}
+		default:return DefWindowProc(hWnd,msg,wParam,lParam);
+	}
+}
+
+extern "C" DLLIMPORT void WinWatcher(){
+	HMODULE hModule = LoadLibrary("user32.dll");
+	if(hModule){
+		SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
+		if(SetProcessDPIAwarev) SetProcessDPIAwarev();//清晰！！！
+	}
+	hFont1=CreateFont(18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("黑体细体"));
+	WNDCLASSEX wcexWW;
+	memset(&wcexWW,0,sizeof(wcexWW));
+	wcexWW.cbSize=sizeof(wcexWW);
+	wcexWW.hInstance=hinst;
+	wcexWW.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);
+	wcexWW.hCursor=LoadCursor(NULL,IDC_ARROW);
+	wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(wcexWW.hInstance,"IDI_WINWATCHER");
+	wcexWW.lpszClassName="WinWatcher";
+	wcexWW.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
+	wcexWW.lpfnWndProc=WWatcherProc;
+	RegisterClassEx(&wcexWW);
+	
+	hWND=CreateWindowEx(0,"WinWatcher","DWPT - WinWatcher",WS_VISIBLE|WS_SYSMENU|WS_CAPTION|WS_MINIMIZEBOX,CW_USEDEFAULT,CW_USEDEFAULT,1000,500,NULL,NULL,NULL,NULL);
+	if(!hWND){
+		MessageBox(NULL,"Cannot create the main window","ERORR",MB_ICONWARNING);
+		return;
+	}
+	
+	MSG msg;
+	ShowWindow(hWND,SW_SHOW);
+	UpdateWindow(hWND);
+	while(GetMessage(&msg, NULL, 0, 0) > 0){
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	//EnableWindow(hwnd,true);
+	return;
+}
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID lpvReserved)
 {
+	hinst=hinstDLL;
 	switch(fdwReason)
 	{
 		case DLL_PROCESS_ATTACH:

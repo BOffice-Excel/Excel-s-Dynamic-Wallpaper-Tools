@@ -11,9 +11,9 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=-DBUILDING_DLL=1_@@_
 CppCompiler=-DBUILDING_DLL=1_@@_
-Linker=
+Linker="../../../../../Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32/libgdi32.a"_@@_
 IsCpp=1
-Icon=HelpDWPT.ico
+Icon=
 ExeOutput=
 ObjectOutput=
 LogOutput=
@@ -29,24 +29,24 @@ IncludeVersionInfo=1
 SupportXPThemes=1
 CompilerSet=3
 CompilerSettings=0000000100000000000000000
-UnitCount=2
+UnitCount=3
 
 [VersionInfo]
 Major=0
 Minor=0
-Release=3
+Release=4
 Build=0
 LanguageID=2052
 CharsetID=1252
 CompanyName=
-FileVersion=0.0.3.0
+FileVersion=0.0.4.0
 FileDescription=Developed using the Dev-C++ IDE
 InternalName=DWPT∞Ô÷˙ø‚
 LegalCopyright=∞Ê»®À˘”– Office-Excel
 LegalTrademarks=
 OriginalFilename=HelpDWPT.dll
 ProductName=DWPT∞Ô÷˙ø‚
-ProductVersion=0.0.3.0
+ProductVersion=0.0.4.0
 AutoIncBuildNr=0
 SyncProduct=1
 
@@ -66,6 +66,15 @@ CompileCpp=1
 Folder=
 Compile=1
 Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=OtherRes.rc
+Folder=Resources
+Compile=1
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=

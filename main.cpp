@@ -37,7 +37,7 @@ char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145];//Ò»¶ÑµÄ×Ö·û´
 DWORD dw/*´ò¿ªÎÄ¼þÊ±µÄ±ê¼Ç*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*¼Ç×¡ËùÓÐ°´Å¥×´Ì¬*/;
 HANDLE hFile;//ÎÄ¼þ¾ä±ú 
 HDC hdc=GetDC(0);
-int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒýÓÃ°´Å¥ÊÂ¼þID±ê¼Ç*/,LangID=-1;
+int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒýÓÃ°´Å¥ÊÂ¼þID±ê¼Ç*/,LangID=2;
 bool quietMode=false;//ÊÇ·ñÆôÓÃ°²¾²Ä£Ê½£¨ÔÚÆô¶¯dwpÎÄ¼þÖÐ£© 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow;//hWnd=ÍÐÅÌÍ¼±ê´°¿Ú¾ä±ú£¬HWND_=Ö÷´°¿Ú¾ä±ú 
 NOTIFYICONDATA nid;//ÍÐÅÌÍ¼±êÊý¾Ý 
@@ -58,7 +58,7 @@ char MUIText[][3][250]={//¶àÓïÑÔÖ§³Ö¹¦ÄÜ
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","ÊÓÆµÎÄ¼þ£¨.mp4£©\0*.mp4\0ÊÓÆµÎÄ¼þ£¨.mov£©\0*.mov\0ÊÓÆµÎÄ¼þ£¨.m4v£©\0*.m4v\0ÊÓÆµÎÄ¼þ£¨.mpg£©\0*.mpg\0ÊÓÆµÎÄ¼þ£¨.mpeg£©\0*.mpeg\0ÊÓÆµÎÄ¼þ£¨.wmv£©\0*.wmv\0ËùÓÐÎÄ¼þ£¨*.*£©\0*.*\0","Ò•îl™n°¸£¨.mp4£©\0*.mp4\0Ò•îl™n°¸£¨.mov£©\0*.mov\0Ò•îl™n°¸£¨.m4v£©\0*.m4v\0Ò•îl™n°¸£¨.mpg£©\0*.mpg\0Ò•îl™n°¸£¨.mpeg£©\0*.mpeg\0Ò•îl™n°¸£¨.wmv£©\0*.wmv\0ËùÓÐ™n°¸£¨*.*£©\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic WallpaperÅäÖÃÎÄ¼þ£¨.dwp£©\0*.dwp\0","Dynamic WallpaperÔO¶¨™n£¨.dwp£©\0*.dwp\0"},
 	{"Do you need to play sound?","ÊÇ·ñÐèÒª²¥·ÅÉùÒô£¿","ÊÇ·ñÐèÒª²¥·ÅÂ•Òô£¿"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.2","³ÌÐòÖÆ×÷£ºOffice-Excel\n²Î¿¼ÊÓÆµ by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.2","³ÌÊ½Ñu×÷£ºOffice-Excel\n…¢”ŽÒ•îlbyÅ¼ –ÓÐücÐ¡ÃÔºý£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.2"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4","³ÌÐòÖÆ×÷£ºOffice-Excel\n²Î¿¼ÊÓÆµ by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4","³ÌÊ½Ñu×÷£ºOffice-Excel\n…¢”ŽÒ•îlbyÅ¼ –ÓÐücÐ¡ÃÔºý£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4"},
 	{"The configuration file operation is complete. Do you want to start it now?","ÅäÖÃÎÄ¼þ²Ù×÷Íê³É£¬ÊÇ·ñÒªÂíÉÏÆô¶¯£¿","ÔO¶¨™n²Ù×÷Íê³É£¬ÊÇ·ñÒªñRÉÏ†¢„Ó£¿"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","ÇëÑ¡ÔñÒªÐÞ¸ÄµÄ¶ÔÏó£º\n ÊÇ->ÐÞ¸ÄÊÓÆµÎÄ¼þÂ·¾¶\n ·ñ->ÐÞ¸ÄÊÇ·ñÓÐÉùÒô\n È¡Ïû->Ê²Ã´Ò²²»×ö","Õˆßx“ñÒªÐÞ¸ÄµÄŒ¦Ïó£º\nÊÇ->ÐÞ¸ÄÒ•îl™n°¸Â·½\n·ñ->ÐÞ¸ÄÊÇ·ñÓÐÂ•Òô\nÈ¡Ïû->Ê²üNÒ²²»×ö"},
 	{"Wallplaper Config","±ÚÖ½ÅäÖÃ","×ÀÃæÅäŒ…"},
@@ -94,7 +94,12 @@ char MUIText[][3][250]={//¶àÓïÑÔÖ§³Ö¹¦ÄÜ
 	{"Do you want to apply it now?","ÊÇ·ñÒªÁ¢¼´Ó¦ÓÃ£º ","ÊÇ·ñÒªÁ¢¼´‘ªÓÃ£¿"},
 	{"Shrink to system tray","ËõÐ¡µ½ÏµÍ³ÍÐÅÌ","¿sÐ¡µ½Ïµ½yÓš±P"},
 	{"How to use it?","ÈçºÎÊ¹ÓÃ£¿","ÈçºÎÊ¹ÓÃ£¿"},
-	{"Advanced Options","¸ß¼¶Ñ¡Ïî","¸ß¼‰ßxí—"}
+	{"Advanced Options","¸ß¼¶Ñ¡Ïî","¸ß¼‰ßxí—"},
+	{"Set","ÉèÖÃ","ÔOÖÃ"},
+	{"Set any window as wallpaper","½«ÈÎÒâ´°¿ÚÉèÖÃÎª±ÚÖ½","Œ¢ÈÎÒâÒ•´°ÔO¶¨žé×ÀÃæ"},
+	{"Title of Window: ","´°¿Ú±êÌâ£º","Ò•´°˜Ëî}£º"},
+	{"Class Name of Window: ","´°¿ÚÀàÃû£º","Ò•´°îÃû£º"},
+	{"Boss key:","ÀÏ°å¼ü£º","ÀÏé›æI£º"}
 };
 
 //left->top->right->bottom
@@ -118,28 +123,8 @@ char* GetString4ThisLang(UINT index){
 		}
 	}
 	return MUIText[index][LangID];
-}/*
+}
 
-void ToastMessageBox(char Title[],char SubTitle[],char Msg[]){
-	NOTIFYICONDATAA nid_msg;
-	nid_msg.uTimeout          =       3000;
-    nid_msg.uVersion          =       NIM_SETVERSION;
-    nid_msg.cbSize            =       sizeof(nid_msg);
-    nid_msg.hWnd              =       HWND_;
-    nid_msg.uID               =       0;
-    nid_msg.uFlags            =       NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_INFO;
-    nid_msg.hIcon             =       LoadIcon(NULL, IDI_WARNING);
-    nid_msg.dwInfoFlags       =       NIIF_WARNING;
-    //nid_msg.
-    strcpy(nid_msg.szTip, Title);
-    strcpy(nid_msg.szInfo, SubTitle);
-    strcpy(nid_msg.szInfoTitle, Msg);
-    Shell_NotifyIcon(NIM_ADD, &nid_msg);
-    Shell_NotifyIcon(NIM_SETVERSION, &nid_msg);
-    Sleep(3000);
-    Shell_NotifyIcon(NIM_DELETE, &nid_msg);
-} 
-*/
 LONG GetRegValue(HKEY key,const char path[],const char keyname[],char value[]){//»ñÈ¡×¢²á±íµÄÄ³¸öÖµ £¨ÎÞÐè¹ÜÀíÔ±£© 
     HKEY hKey;
     BYTE byData[255];
@@ -326,6 +311,7 @@ void PutToDesktop(HWND Wallpaper){
 	SetWindowPos(hFfplay, NULL, 0, 0, width, height, SWP_NOZORDER);//ÉèÖÃ´°¿Ú´óÐ¡ºÍÎ»ÖÃ 
 	SetParent(hFfplay, hProgman);//ÉèÖÃ¸¸´°¿Ú 
 	EnumWindows(EnumWindowProc, 0);//½«Õâ¸ö´°¿Ú·Åµ½×ÀÃæµÄºó±ß 
+    //Shell_NotifyIcon(NIM_SETVERSION, &nid);//Toast Message Box
 	return ;
 }
 
@@ -456,11 +442,11 @@ DWORD WINAPI FindWindowProcess(LPVOID lparam){
 			DRect.bottom=rect.bottom+5;
 			FillRect(hdc,&DRect,GBrush);*/
 			char Text[1145];
-			strcpy(str,"´°¿Ú±êÌâ£º");
+			strcpy(str,GetString4ThisLang(49));
 			GetWindowText(ChooseWindow,Text,GetWindowTextLength(ChooseWindow)+1);
 			strcat(str,Text);
 			SetDlgItemText(hAnyWindow,1,str);
-			strcpy(str,"´°¿ÚÀàÃû£º");
+			strcpy(str,GetString4ThisLang(50));
 			GetClassName(ChooseWindow,Text,sizeof(Text));
 			strcat(str,Text);
 			SetDlgItemText(hAnyWindow,2,str);
@@ -924,7 +910,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					return 0;
 				}
 				case 12:{
-					HelpWindow(HInstance,hwnd);
+					HelpWindow(hwnd);
 					break;
 				} 
 				case 13:{
@@ -943,6 +929,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 							PutToDesktop(ChooseWindow);
 						}
 					}
+					break;
+				}
+				case 15:{
+					WinWatcher();
 					break;
 				}
 			}
@@ -1085,7 +1075,7 @@ int main(int argc,char *argv[]) {//mainº¯Êý
 	}
 	return winMain(
 		GetModuleHandle(NULL),//»ñÈ¡±¾³ÌÐòµÄ¾ä±ú
-		NULL,//Õâ¸öb²ÎÊýÎªÊ²Ã´ÐèÒªÎÒÒ²²»ÖªµÀ
+		NULL,//Õâ¸ö²ÎÊýÎªÊ²Ã´ÐèÒªÎÒÒ²²»ÖªµÀ
 		CmdLine,//ÃüÁîÐÐ
 		SW_SHOW//¶¨Òå´°¿ÚÕ¹Ê¾·½Ê½£¬²ÎÊý´«¸øShowWindowº¯Êý£¬ÕâÀïÎªSW_SHOW
 	);
@@ -1120,8 +1110,6 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	SetProcessDPIAwarev();//ÇåÎú£¡£¡£¡ 
 	//LoadUI();
 	
-	//ToastMessageBox("Dynamic Wallpaper Tools","^_^","³ÌÐòÒÑÆô¶¯Íê³É£¬Çë²»Òª¶þ´ÎÔËÐÐ");
-	
 	HInstance = GetModuleHandle(NULL);
 	WNDCLASS wc1 = {};
     wc1.lpfnWndProc = TrayNotificationCallback;
@@ -1131,19 +1119,24 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
     	MessageBox(NULL,"Tray Icon Registration Failed!","Error",MB_ICONWARNING|MB_OK);
     	return 0;
 	}
-    HWND hWnd = CreateWindowEx(0, wc1.lpszClassName, "TrayIconWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, 0, wc1.hInstance, 0);
+    HWND hWnd = CreateWindowEx(0, wc1.lpszClassName, "TrayIconWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, 0, wc1.hInstance, 0);//´°¿ÚÍÐÅÌÍ¼±ê´¦Àí´°¿Ú 
 	//´´½¨ 
     nid.cbSize = sizeof(NOTIFYICONDATA);
     nid.hWnd = hWnd;
     nid.uID = 10000;
-    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	nid.uTimeout = 0;
+    nid.uVersion = NIM_SETVERSION;
+    nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_INFO;//ÍÐÅÌÍ¼±ê±ê¼Ç 
     nid.uCallbackMessage = WM_USER;
     nid.hIcon = LoadIcon(hINstance,"A"); // ´Ó×ÊÔ´¼ÓÔØÍ¼±ê
     strcpy(nid.szTip,"Dynamic Wallpaper Tools");
+    strcpy(nid.szInfo, "^_^");
+    strcpy(nid.szInfoTitle,"³ÌÐòÒÑÆô¶¯Íê³É£¬Çë²»Òª¶þ´ÎÔËÐÐ");//Toast Message Box
     Shell_NotifyIcon(NIM_ADD,&nid);
-    
+    //Shell_NotifyIcon(NIM_SETVERSION, &nid);
+	
     //CreateThread(NULL,NULL,nidThread,NULL,NULL,NULL);//Æô¶¯Ïß³Ì 
-    Sleep(200);
+    //Sleep(200);
     
 	MSG msg; /* A temporary location for all messages */
 
@@ -1166,25 +1159,28 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		return 0;
 	}
 	
-	HMENU menu=CreateMenu(),OPEN=CreatePopupMenu(),AboutMenu=CreatePopupMenu(),DefMenu=CreatePopupMenu();//Ìí¼Ó²Ëµ¥Ïî 
+	HMENU menu=CreateMenu(),OPEN=CreatePopupMenu(),AboutMenu=CreatePopupMenu(),DefMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu();//Ìí¼Ó²Ëµ¥Ïî 
 	GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","BLAS",RETURN);//»ñÈ¡×¢²á±íÏî 
 	AppendMenu(FileMenu,((strcmp(RETURN,"true")==0)?MF_CHECKED:MF_UNCHECKED),10,GetString4ThisLang(15));//¿ª»ú×ÔÆô¶¯Ïî 
-	AppendMenu(OPEN,MF_STRING,2,GetString4ThisLang(17));
-	AppendMenu(OPEN,MF_STRING,3,GetString4ThisLang(24));
-	AppendMenu(OPEN,MF_STRING,7,GetString4ThisLang(25));
-	AppendMenu(DefMenu,MF_STRING,8,GetString4ThisLang(17));
-	AppendMenu(DefMenu,MF_STRING,9,GetString4ThisLang(24));
+	AppendMenu(OPEN,MF_STRING,2,GetString4ThisLang(17));//±à¼­ÅäÖÃÎÄ¼þ 
+	AppendMenu(OPEN,MF_STRING,3,GetString4ThisLang(24));//Æô¶¯ÅäÖÃÎÄ¼þ 
+	AppendMenu(OPEN,MF_STRING,7,GetString4ThisLang(25));//ÉèÖÃÎªÄ¬ÈÏÏî 
+	AppendMenu(DefMenu,MF_STRING,8,GetString4ThisLang(17));//±à¼­Ä¬ÈÏÅäÖÃÎÄ¼þ 
+	AppendMenu(DefMenu,MF_STRING,9,GetString4ThisLang(24));//Æô¶¯Ä¬ÈÏÅäÖÃÎÄ¼þ 
 	AppendMenu(FileMenu,MF_STRING,1,StringCat(GetString4ThisLang(0)," (&N)"));//ÐÂ½¨ÅäÖÃÎÄ¼þÏî 
-	AppendMenu(FileMenu,MF_HILITE,0,NULL);
-	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)DefMenu,GetString4ThisLang(31));
-	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)OPEN,GetString4ThisLang(30));
-	AppendMenu(FileMenu,MF_HILITE,0,NULL);
-	AppendMenu(FileMenu,MF_STRING,5,GetString4ThisLang(29));
-	AppendMenu(FileMenu,MF_STRING,4,GetString4ThisLang(20));
-	AppendMenu(menu,MF_POPUP,(UINT_PTR)FileMenu,GetString4ThisLang(27));
-	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));
-	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));
-	AppendMenu(menu,MF_POPUP,(UINT_PTR)AboutMenu,GetString4ThisLang(26));
+	AppendMenu(FileMenu,MF_HILITE,0,NULL);//·Ö¸îÏß 
+	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)DefMenu,GetString4ThisLang(31));//´ò¿ªÄ¬ÈÏÏî²¢¡£¡£¡£ 
+	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)OPEN,GetString4ThisLang(30));//´ò¿ª²¢¡£¡£¡£ 
+	AppendMenu(FileMenu,MF_HILITE,0,NULL);//·Ö¸îÏß 
+	AppendMenu(FileMenu,MF_STRING,5,GetString4ThisLang(29));//½áÊø¶¯Ì¬±ÚÖ½ 
+	AppendMenu(FileMenu,MF_STRING,4,GetString4ThisLang(20));//ÍË³ö 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)FileMenu,GetString4ThisLang(27));//ÎÄ¼þ 
+	AppendMenu(FuncMenu,MF_STRING,15,"´ò¿ªWinWatcher¹¤¾ß");//´ò¿ªWinWatcher¹¤¾ß 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,"¹¦ÄÜ£¨&T£©");//¹¦ÄÜ 
+	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//ÈçºÎÊ¹ÓÃ 
+	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));//µ¯³ö¹ØÓÚÐÅÏ¢¿ò 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)AboutMenu,GetString4ThisLang(26));//¹ØÓÚ 
+	//´´½¨¸÷ÖÖ²Ëµ¥ 
 	
 	HWND_ = CreateWindowEx(WS_EX_ACCEPTFILES,"DWPT_PRIVATECLASS", "Dynamic Wallpaper Tools", WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | DS_FIXEDSYS | DS_3DLOOK | DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG,
 		CW_USEDEFAULT, /* x */
@@ -1215,9 +1211,9 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
         0, 0, 800, 400, HWND_,(HMENU) 13, NULL, NULL);//´´½¨Tab Control
     SendMessage(hTab,WM_SETFONT,(WPARAM)hFont,NULL);
 	
-	DWORD dwAttribute = 20;/*DWMWA_USE_IMMERSIVE_DARK_MODE;*/ // ÉèÖÃ°µÉ«Ä£Ê½ÊôÐÔ
+	/*DWORD dwAttribute = 20;//DWMWA_USE_IMMERSIVE_DARK_MODE; // ÉèÖÃ°µÉ«Ä£Ê½ÊôÐÔ
 	BOOL bValue = TRUE; // ÆôÓÃ°µÉ«Ä£Ê½
-	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // ÉèÖÃ´°¿ÚÊôÐÔ
+	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // ÉèÖÃ´°¿ÚÊôÐÔ*/
 	
     for(int i=0;i<3;i++){//´´½¨Á½¸ö´°¿ÚºÍ¿Ø¼þ 
 		tie.mask = TCIF_TEXT;
@@ -1246,8 +1242,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			SendMessage(hStaticDef,WM_SETFONT,(WPARAM)hFont,NULL);
 			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
 			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"STATIC","ÀÏ°å¼ü£º",WS_CHILD|WS_VISIBLE,20,100,100,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON","ÉèÖÃ",WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)13,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)16,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//Òþ²ØhSet´°¿Ú 
@@ -1255,22 +1251,23 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		else{
 			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
 			ShowWindow(hAnyWindow,SW_HIDE);
-			SendMessage(CreateWindowEx(0,"BUTTON","½«ÈÎÒâ´°¿ÚÉèÖÃÎª±ÚÖ½",WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hsti=CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
 			SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(hINstance,"IDI_SELECTUNUSE"));
-			SendMessage(CreateWindowEx(0,"STATIC","´°¿Ú±êÌâ£º",WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
+			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
 				(WPARAM)CreateFont(20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("Ë¼Ô´")),NULL);
-			SendMessage(CreateWindowEx(0,"STATIC","´°¿ÚÀàÃû£º",WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON","ÉèÖÃ",WS_CHILD|WS_VISIBLE,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
-	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);
+	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//Ìí¼Ó 
 	}
 	
 	HMENU hMenu=GetSystemMenu(HWND_,FALSE);
-	AppendMenu(hMenu,MF_HILITE,0,NULL);
-	AppendMenu(hMenu,MF_STRING,11,GetString4ThisLang(44));
-	AppendMenu(hMenu,MF_STRING,4,GetString4ThisLang(20));//ÐÞ¸Ä´°¿ÚµÄÄ¬ÈÏÏµÍ³²Ëµ¥
+	AppendMenu(hMenu,MF_HILITE,0,NULL);//·Ö¸îÏß 
+	AppendMenu(hMenu,MF_STRING,11,GetString4ThisLang(44));//ËõÐ¡µ½ÏµÍ³ÍÐÅÌ 
+	AppendMenu(hMenu,MF_STRING,4,GetString4ThisLang(20));//ÍË³ö 
+	//ÐÞ¸Ä´°¿ÚµÄÄ¬ÈÏÏµÍ³²Ëµ¥
 
 	/*
 		This is the heart of our program where all input is processed and
@@ -1288,6 +1285,6 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		DispatchMessage(&msg); /* Send it to WndProc */
 	}//Ö÷Ñ­»· 
 	
-    Shell_NotifyIcon(NIM_DELETE, &nid);
+    Shell_NotifyIcon(NIM_DELETE, &nid);//É¾³ýÍ¼±ê 
 	return (int)msg.wParam;//·µ»ØÖµ 
 }
