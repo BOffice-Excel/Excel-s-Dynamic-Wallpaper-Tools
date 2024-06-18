@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <io.h>
 #include <commctrl.h>
-#include <dwmapi.h>
+//#include <dwmapi.h>
 #define DLLIMPORT __declspec(dllexport)
 #include "HelpDWPT\dll.h"
 #pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
@@ -37,7 +37,7 @@ char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145];//Ò»¶ÑµÄ×Ö·û´
 DWORD dw/*´ò¿ªÎÄ¼şÊ±µÄ±ê¼Ç*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*¼Ç×¡ËùÓĞ°´Å¥×´Ì¬*/;
 HANDLE hFile;//ÎÄ¼ş¾ä±ú 
 HDC hdc=GetDC(0);
-int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒıÓÃ°´Å¥ÊÂ¼şID±ê¼Ç*/,LangID=2;
+int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒıÓÃ°´Å¥ÊÂ¼şID±ê¼Ç*/,LangID=-1;
 bool quietMode=false;//ÊÇ·ñÆôÓÃ°²¾²Ä£Ê½£¨ÔÚÆô¶¯dwpÎÄ¼şÖĞ£© 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow;//hWnd=ÍĞÅÌÍ¼±ê´°¿Ú¾ä±ú£¬HWND_=Ö÷´°¿Ú¾ä±ú 
 NOTIFYICONDATA nid;//ÍĞÅÌÍ¼±êÊı¾İ 
@@ -58,7 +58,7 @@ char MUIText[][3][250]={//¶àÓïÑÔÖ§³Ö¹¦ÄÜ
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","ÊÓÆµÎÄ¼ş£¨.mp4£©\0*.mp4\0ÊÓÆµÎÄ¼ş£¨.mov£©\0*.mov\0ÊÓÆµÎÄ¼ş£¨.m4v£©\0*.m4v\0ÊÓÆµÎÄ¼ş£¨.mpg£©\0*.mpg\0ÊÓÆµÎÄ¼ş£¨.mpeg£©\0*.mpeg\0ÊÓÆµÎÄ¼ş£¨.wmv£©\0*.wmv\0ËùÓĞÎÄ¼ş£¨*.*£©\0*.*\0","Ò•îl™n°¸£¨.mp4£©\0*.mp4\0Ò•îl™n°¸£¨.mov£©\0*.mov\0Ò•îl™n°¸£¨.m4v£©\0*.m4v\0Ò•îl™n°¸£¨.mpg£©\0*.mpg\0Ò•îl™n°¸£¨.mpeg£©\0*.mpeg\0Ò•îl™n°¸£¨.wmv£©\0*.wmv\0ËùÓĞ™n°¸£¨*.*£©\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic WallpaperÅäÖÃÎÄ¼ş£¨.dwp£©\0*.dwp\0","Dynamic WallpaperÔO¶¨™n£¨.dwp£©\0*.dwp\0"},
 	{"Do you need to play sound?","ÊÇ·ñĞèÒª²¥·ÅÉùÒô£¿","ÊÇ·ñĞèÒª²¥·ÅÂ•Òô£¿"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4","³ÌĞòÖÆ×÷£ºOffice-Excel\n²Î¿¼ÊÓÆµ by Å¼¶ûÓĞµãĞ¡ÃÔºı£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4","³ÌÊ½Ñu×÷£ºOffice-Excel\n…¢”Ò•îlbyÅ¼ –ÓĞücĞ¡ÃÔºı£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4.1","³ÌĞòÖÆ×÷£ºOffice-Excel\n²Î¿¼ÊÓÆµ by Å¼¶ûÓĞµãĞ¡ÃÔºı£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4.1","³ÌÊ½Ñu×÷£ºOffice-Excel\n…¢”Ò•îlbyÅ¼ –ÓĞücĞ¡ÃÔºı£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.4.1"},
 	{"The configuration file operation is complete. Do you want to start it now?","ÅäÖÃÎÄ¼ş²Ù×÷Íê³É£¬ÊÇ·ñÒªÂíÉÏÆô¶¯£¿","ÔO¶¨™n²Ù×÷Íê³É£¬ÊÇ·ñÒªñRÉÏ†¢„Ó£¿"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","ÇëÑ¡ÔñÒªĞŞ¸ÄµÄ¶ÔÏó£º\n ÊÇ->ĞŞ¸ÄÊÓÆµÎÄ¼şÂ·¾¶\n ·ñ->ĞŞ¸ÄÊÇ·ñÓĞÉùÒô\n È¡Ïû->Ê²Ã´Ò²²»×ö","Õˆßx“ñÒªĞŞ¸ÄµÄŒ¦Ïó£º\nÊÇ->ĞŞ¸ÄÒ•îl™n°¸Â·½\n·ñ->ĞŞ¸ÄÊÇ·ñÓĞÂ•Òô\nÈ¡Ïû->Ê²üNÒ²²»×ö"},
 	{"Wallplaper Config","±ÚÖ½ÅäÖÃ","×ÀÃæÅäŒ…"},
