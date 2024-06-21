@@ -5,7 +5,7 @@
 //#include <dwmapi.h>
 #define DLLIMPORT __declspec(dllexport)
 #include "HelpDWPT\dll.h"
-#pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
+//#pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
 #define key_press(key) ((GetAsyncKeyState(key)&0x8000)?1:0)//定义按键检测函数 
 //#include "C:\Users\ywh11\Desktop\MyUI\dll.h"
 //#pragma comment (lib,"User32.lib")
@@ -58,7 +58,7 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","视频文件（.mp4）\0*.mp4\0视频文件（.mov）\0*.mov\0视频文件（.m4v）\0*.m4v\0视频文件（.mpg）\0*.mpg\0视频文件（.mpeg）\0*.mpeg\0视频文件（.wmv）\0*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（.mp4）\0*.mp4\0視頻檔案（.mov）\0*.mov\0視頻檔案（.m4v）\0*.m4v\0視頻檔案（.mpg）\0*.mpg\0視頻檔案（.mpeg）\0*.mpeg\0視頻檔案（.wmv）\0*.wmv\0所有檔案（*.*）\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic Wallpaper配置文件（.dwp）\0*.dwp\0","Dynamic Wallpaper設定檔（.dwp）\0*.dwp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4.1","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.4.1","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.4.1"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4.2","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.4.2","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.4.2"},
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
 	{"Wallplaper Config","壁纸配置","桌面配寘"},
