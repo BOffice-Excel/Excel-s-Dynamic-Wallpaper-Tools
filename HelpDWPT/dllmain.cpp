@@ -163,6 +163,11 @@ DWPT项目属性：\r\n\
 		default:return DefWindowProc(hWnd,msg,wParam,lParam);
 	}
 }
+
+extern "C" DLLIMPORT DWORD WINAPI KeyWatchThread(LPVOID lparam){
+	
+}
+
 extern "C" DLLIMPORT void HelpWindow(HWND hwnd){
 	HFONT hFont;
 	hFont=CreateFont(18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("黑体细体"));

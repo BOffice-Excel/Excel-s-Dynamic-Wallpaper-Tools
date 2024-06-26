@@ -1,4 +1,6 @@
 EXPORTS
     HelpWindow = HelpWindow@4 @1
     HelpWindow@4 @2
-    WinWatcher @3
+    KeyWatchThread = KeyWatchThread@4 @3
+    KeyWatchThread@4 @4
+    WinWatcher @5
