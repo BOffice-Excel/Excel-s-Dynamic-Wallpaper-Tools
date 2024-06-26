@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.4.2"
+#define MyAppVersion "0.0.5.0"
 #define MyAppPublisher "Office-Excel"
 #define MyAppURL "https://space.bilibili.com/1439352366/"
 #define MyAppExeName "DynamicWallpaperTools.exe"
@@ -64,8 +64,9 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion      
 Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\HelpDWPT.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\Config.ini"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

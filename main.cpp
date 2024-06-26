@@ -33,7 +33,7 @@
 
 HINSTANCE HInstance; //程序的句柄，使用GetModuleHandle函数即可获得 
 WNDCLASSEX wc; //窗口类，创建窗口时需要注册一个类才可以创建窗口，否则报错 
-char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145];//一堆的字符串，大多都是临时的、在StartDwp函数中使用 
+char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145],ConfigFile[MAX_PATH+1];//一堆的字符串，大多都是临时的、在StartDwp函数中使用 
 DWORD dw/*打开文件时的标记*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*记住所有按钮状态*/;
 HANDLE hFile;//文件句柄 
 HDC hdc=GetDC(0);
@@ -41,7 +41,7 @@ int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/
 bool quietMode=false;//是否启用安静模式（在启动dwp文件中） 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATA nid;//托盘图标数据 
-HMENU FileMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
+HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
 typedef BOOL WINAPI (*SPDA)(VOID);
 SPDA SetProcessDPIAwarev;//设置该进程的DPI，不设会很丑且比例不太对 
@@ -58,7 +58,7 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","视频文件（.mp4）\0*.mp4\0视频文件（.mov）\0*.mov\0视频文件（.m4v）\0*.m4v\0视频文件（.mpg）\0*.mpg\0视频文件（.mpeg）\0*.mpeg\0视频文件（.wmv）\0*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（.mp4）\0*.mp4\0視頻檔案（.mov）\0*.mov\0視頻檔案（.m4v）\0*.m4v\0視頻檔案（.mpg）\0*.mpg\0視頻檔案（.mpeg）\0*.mpeg\0視頻檔案（.wmv）\0*.wmv\0所有檔案（*.*）\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic Wallpaper配置文件（.dwp）\0*.dwp\0","Dynamic Wallpaper設定檔（.dwp）\0*.dwp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.4.2","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.4.2","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.4.2"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.5.0","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.5.0","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.5.0"},
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
 	{"Wallplaper Config","壁纸配置","桌面配寘"},
@@ -258,6 +258,16 @@ bool OpenFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[]) {//打开
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	if (!GetOpenFileName(&ofn)) return false;//失败 或者 用户点击了取消 
 	else strcpy(Output_Path,ofn.lpstrFile);
+	if(strcmp(FileType,GetString4ThisLang(8))==0){
+		char str[1145];
+		for(int i=9;i>=1;i--){
+			sprintf(RETURN,"File[%d]",i-1);
+			GetPrivateProfileString("Histroy",RETURN,NULL,str,MAX_PATH,ConfigFile);
+			sprintf(RETURN,"File[%d]",i);
+			WritePrivateProfileString("Histroy",RETURN,str,ConfigFile);
+		}
+		WritePrivateProfileString("Histroy","File[0]",Output_Path,ConfigFile);
+	}
 	return true;//成功 
 }
 bool SaveFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[],const char typestr[]) {//保存文件对话框 
@@ -281,6 +291,14 @@ bool SaveFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[],const ch
 	int i = strlen(ofn.lpstrFile);
 	while (i>0&&((Output_Path)[i]) != '.' && ((Output_Path)[i]) != '\\') i--;
 	if (((Output_Path)[i]) == '\\') strcat((Output_Path),(char*)"."), strcat((Output_Path), (char*)typestr);//判定是否有后缀名，没有就加一个默认的 
+	char str[1145];
+	for(int i=1;i<=9;i++){
+		sprintf(RETURN,"File[%d]",i-1);
+		GetPrivateProfileString("Histroy",RETURN,NULL,str,MAX_PATH,ConfigFile);
+		sprintf(RETURN,"File[%d]",i);
+		WritePrivateProfileString("Histroy",RETURN,str,ConfigFile);
+	}
+	WritePrivateProfileString("Histroy","File[0]",Output_Path,ConfigFile);
 	return true;//成功！ 
 }
 
@@ -935,6 +953,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					WinWatcher();
 					break;
 				}
+				case 16:
+				case 17:
+				case 18:
+				case 19:
+				case 20:
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+				case 25:{
+					char str[1145];
+					GetMenuString(HistroyMenu,LOWORD(wParam),str,MAX_PATH+2,MF_STRING);
+					if(access(str,F_OK)==0){
+						StartDwp(str,false);
+					}
+					else MessageBox(hwnd,"路径不合法\\文件不存在，无法启动dwp配置文件","Error",MB_ICONWARNING);
+					break;
+				}
 			}
 			break;
 		}
@@ -1057,6 +1093,7 @@ int main(int argc,char *argv[]) {//main函数
 		if(programName[i]!='\\') programName[i]=NULL;
 		else break;
 	}
+	sprintf(ConfigFile,"%s\\Config.ini",programName);
 	if(hasCmd==true){
 		if(FindWindow("DWPT_PRIVATECLASS",0)!=NULL) return 0;
 		else{
@@ -1159,6 +1196,14 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		return 0;
 	}
 	
+	//添加历史到HistroyMenu
+	char str[]="File[114]",path[1145];
+	for(int i=0;i<=9;i++){
+		sprintf(str,"File[%d]",i);
+		GetPrivateProfileString("Histroy",str,NULL,path,MAX_PATH+2,ConfigFile);
+		AppendMenu(HistroyMenu,MF_STRING,16+i,path); 
+	}
+	
 	HMENU menu=CreateMenu(),OPEN=CreatePopupMenu(),AboutMenu=CreatePopupMenu(),DefMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu();//添加菜单项 
 	GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","BLAS",RETURN);//获取注册表项 
 	AppendMenu(FileMenu,((strcmp(RETURN,"true")==0)?MF_CHECKED:MF_UNCHECKED),10,GetString4ThisLang(15));//开机自启动项 
@@ -1171,6 +1216,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(FileMenu,MF_HILITE,0,NULL);//分割线 
 	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)DefMenu,GetString4ThisLang(31));//打开默认项并。。。 
 	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)OPEN,GetString4ThisLang(30));//打开并。。。 
+	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)HistroyMenu,"历史");
 	AppendMenu(FileMenu,MF_HILITE,0,NULL);//分割线 
 	AppendMenu(FileMenu,MF_STRING,5,GetString4ThisLang(29));//结束动态壁纸 
 	AppendMenu(FileMenu,MF_STRING,4,GetString4ThisLang(20));//退出 
