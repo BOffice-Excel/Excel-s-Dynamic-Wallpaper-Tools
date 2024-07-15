@@ -40,6 +40,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 		case WM_COMMAND: {
 			switch(LOWORD(wParam)){
 				case 1:{
+					//LoadString(hinst,)
 					SetWindowText(FindWindowEx(hWnd,NULL,"EDIT",NULL),"DWPT的优点：\n\r1.轻便\r\n\
     DWPT在Windows7及上的版本中除了WinAPI的库和HelpDWPT.dll，不需要其他杂七杂八的库，且DWPT主程序仅有200多KiB，比你用iostream库写一个Hello World编译出来的程序还小，并且不依赖Visual C++运行库\r\n\
 2.界面简洁\r\n\
@@ -302,7 +303,10 @@ LRESULT CALLBACK WWatcherProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,340,750,25,hWnd,(HMENU)IDC_CLSSYE,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
 			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,370,750,25,hWnd,(HMENU)IDC_HCURSOR,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
 			SendMessage(CreateWindowEx(0,"EDIT",NULL,WS_CHILD|WS_VISIBLE|WS_BORDER|ES_READONLY,180,400,750,25,hWnd,(HMENU)IDC_PROCESSID,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON","启动窗口信息监听器（未使用）",WS_CHILD|WS_VISIBLE|BS_ICON,710,80,215,40,hWnd,(HMENU)IDC_MSGWTR,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","启动窗口信息监听器（未使用）",WS_CHILD|WS_VISIBLE,710,80,215,40,hWnd,(HMENU)IDC_MSGWTR,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","隐藏窗口",WS_CHILD|WS_VISIBLE,500,80,215,20,hWnd,(HMENU)13,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON","显示窗口",WS_CHILD|WS_VISIBLE,600,100,215,20,hWnd,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
+			
 			//SendDlgItemMessage(hWND,0,WM_SETFONT,(WPARAM)hFont1,NULL);
 			break;
 		}
@@ -314,6 +318,14 @@ LRESULT CALLBACK WWatcherProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 				case IDC_MSGWTR:{
 					
+					break;
+				}
+				case 13:{
+					ShowWindow(ChooseWindow,SW_HIDE);
+					break;
+				}
+				case 14:{
+					ShowWindow(ChooseWindow,SW_SHOW);
 					break;
 				}
 			}
