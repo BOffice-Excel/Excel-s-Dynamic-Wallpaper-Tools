@@ -37,7 +37,7 @@ char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145],ConfigFile[MA
 DWORD dw/*打开文件时的标记*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*记住所有按钮状态*/;
 HANDLE hFile;//文件句柄 
 HDC hdc=GetDC(0);
-int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/,LangID=-1;
+int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/,LangID=0;
 bool quietMode=false;//是否启用安静模式（在启动dwp文件中） 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATA nid;//托盘图标数据 
@@ -55,10 +55,10 @@ char MUIText[][3][250]={//多语言支持功能
 	{"About Dynamic Wallpaper Tools","关于Dynamic Wallpaper Tools","關於Dynamic Wallpaper Tools"},
 	{"Unable to open the video display program \"mshta.exe\" (playing videos using a browser), please check if the program exists in the system directory","无法打开视频显示程序\"mshta.exe\"（使用浏览器播放视频），请检查系统目录下程序是否存在","無法打開視頻顯示程式\"mshta.exe\"（使用瀏覽器播放視頻），請檢查系統目錄下程式是否存在"},
 	{"Warning! This operation will close all windows under the class name \"Program\"!","警告！此操作会关闭所有在类名为“Progman”的窗口下的所有窗口！","警告！ 此操作會關閉所有在類名為“Progman”的視窗下的所有視窗"},
-	{"Video files (.mp4)\0*.mp4\0Video files (.mov)\0*.mov\0Video files (.m4v)\0*.m4v\0Video files (.mpg)\0*.mpg\0Video files (.mpeg)\0*.mpeg\0Video files (.wmv)\0*.wmv\0All files (*.*) \0 *.* \0","视频文件（.mp4）\0*.mp4\0视频文件（.mov）\0*.mov\0视频文件（.m4v）\0*.m4v\0视频文件（.mpg）\0*.mpg\0视频文件（.mpeg）\0*.mpeg\0视频文件（.wmv）\0*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（.mp4）\0*.mp4\0視頻檔案（.mov）\0*.mov\0視頻檔案（.m4v）\0*.m4v\0視頻檔案（.mpg）\0*.mpg\0視頻檔案（.mpeg）\0*.mpeg\0視頻檔案（.wmv）\0*.wmv\0所有檔案（*.*）\0*.*\0"},
+	{"Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0","视频文件（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有文件（*.*）\0*.*\0","視頻檔案（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有檔案（*.*）\0*.*\0"},
 	{"Dynamic Wallpaper Configuration Files (.dwp)\0*.dwp\0","Dynamic Wallpaper配置文件（.dwp）\0*.dwp\0","Dynamic Wallpaper設定檔（.dwp）\0*.dwp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},
-	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.5.0","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.5.0","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.5.0"},
+	{"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.5.1","程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.5.1","程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.5.1"},
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
 	{"Wallplaper Config","壁纸配置","桌面配寘"},
@@ -99,7 +99,11 @@ char MUIText[][3][250]={//多语言支持功能
 	{"Set any window as wallpaper","将任意窗口设置为壁纸","將任意視窗設定為桌面"},
 	{"Title of Window: ","窗口标题：","視窗標題："},
 	{"Class Name of Window: ","窗口类名：","視窗類名："},
-	{"Boss key:","老板键：","老闆鍵："}
+	{"Boss key:","老板键：","老闆鍵："},
+	{"Histroy","历史","歷史"},
+	{"Tools (&T)","工具（&T）","工具（&T）"},
+	{"Open the WinWatcher tool","打开WinWatcher工具","打開WinWatcher工具"},
+	{"The path is invalid \\ The file does not exist, unable to start the DWP configuration file","路径不合法\\文件不存在，无法启动dwp配置文件","路徑不合法\\檔案不存在，無法啟動dwp設定檔"}
 };
 
 //left->top->right->bottom
@@ -284,7 +288,7 @@ bool SaveFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[],const ch
 	ofn.nFilterIndex = 1;
 	ofn.lpstrInitialDir = NULL;
 	ofn.lpstrFileTitle = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
 	if (!GetSaveFileNameA(&ofn)) return false;//失败 \ 用户点击了取消 
 	else strcpy(Output_Path,ofn.lpstrFile);//复制文本 
@@ -968,7 +972,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					if(access(str,F_OK)==0){
 						StartDwp(str,false);
 					}
-					else MessageBox(hwnd,"路径不合法\\文件不存在，无法启动dwp配置文件","Error",MB_ICONWARNING);
+					else MessageBox(hwnd,GetString4ThisLang(55),"Error",MB_ICONWARNING);
+					break;
+				}
+				case 26:{
+					MessageBox(hwnd,"This feature has not been developed yet.","ERROR",MB_ICONWARNING);
 					break;
 				}
 			}
@@ -1216,13 +1224,13 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(FileMenu,MF_HILITE,0,NULL);//分割线 
 	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)DefMenu,GetString4ThisLang(31));//打开默认项并。。。 
 	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)OPEN,GetString4ThisLang(30));//打开并。。。 
-	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)HistroyMenu,"历史");
+	AppendMenu(FileMenu,MF_POPUP,(UINT_PTR)HistroyMenu,GetString4ThisLang(52));//历史 
 	AppendMenu(FileMenu,MF_HILITE,0,NULL);//分割线 
 	AppendMenu(FileMenu,MF_STRING,5,GetString4ThisLang(29));//结束动态壁纸 
 	AppendMenu(FileMenu,MF_STRING,4,GetString4ThisLang(20));//退出 
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FileMenu,GetString4ThisLang(27));//文件 
-	AppendMenu(FuncMenu,MF_STRING,15,"打开WinWatcher工具");//打开WinWatcher工具 
-	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,"功能（&T）");//功能 
+	AppendMenu(FuncMenu,MF_STRING,15,GetString4ThisLang(54));//打开WinWatcher工具 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//功能 
 	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//如何使用 
 	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));//弹出关于信息框 
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)AboutMenu,GetString4ThisLang(26));//关于 
@@ -1289,7 +1297,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
 			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)16,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 

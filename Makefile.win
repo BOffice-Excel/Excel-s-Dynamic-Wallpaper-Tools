@@ -11,8 +11,8 @@ LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib32" -L"C:/Program Files 
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = DynamicWallpaperTools.exe
-CXXFLAGS = $(CXXINCS) -m32 -luser32 -lurlmon -lgdi32
-CFLAGS   = $(INCS) -m32 -luser32 -lurlmon -lgdi32
+CXXFLAGS = $(CXXINCS) -m32 -luser32 -lurlmon -lgdi32 -lwinmm
+CFLAGS   = $(INCS) -m32 -luser32 -lurlmon -lgdi32 -lwinmm
 RM       = rm.exe -f
 
 .PHONY: all all-before all-after clean clean-custom
