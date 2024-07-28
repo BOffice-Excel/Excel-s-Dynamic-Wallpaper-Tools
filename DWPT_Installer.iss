@@ -2,10 +2,13 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.5.1"
+#define MyAppVersion "0.0.6.0"
 #define MyAppPublisher "Office-Excel"
 #define MyAppURL "https://space.bilibili.com/1439352366/"
 #define MyAppExeName "DynamicWallpaperTools.exe"
+#define MyAppAssocName "DWPT±⁄÷Ω≈‰÷√œÓ"
+#define MyAppAssocExt ".dp"
+#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -68,6 +71,13 @@ Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\{#MyAppExeName}"; DestDir: "{ap
 Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\HelpDWPT.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\Config.ini"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+[Registry]
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" -o ""%1"""
+Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".dp"; ValueData: ""
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
