@@ -86,7 +86,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 				}
 				case 3:{
 					SetWindowText(FindWindowEx(hWnd,NULL,"EDIT",NULL),"问题 & 回答：\n\r问：为什么你不用CLR创建窗口？\r\n\
-答：因为要照顾一些装不上Visual C++运行库的特殊人群，就像She_Fa21，如果不装VC会提示少dll，并且gcc编译的更小\r\n\r\n\
+答：因为要照顾一些装不上Visual C++运行库的特殊人群，就像She_Fa21（我朋友），如果不装VC会提示少dll，并且gcc编译的更小\r\n\r\n\
 问：你创建出来的窗口和控件为什么都是Win11样式的且DPI不会有问题而我不行？\r\n\
 答：这个问题我也想过，我从网上大量搜集资料且实践了很久才琢磨出这种方法，对于您的问题，我有以下解决方法：\r\n\
     对于控件是旧版的问题：\r\n\
