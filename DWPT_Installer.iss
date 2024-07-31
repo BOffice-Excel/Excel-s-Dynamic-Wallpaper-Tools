@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.6.0"
+#define MyAppVersion "0.0.6.1"
 #define MyAppPublisher "Office-Excel"
 #define MyAppURL "https://space.bilibili.com/1439352366/"
 #define MyAppExeName "DynamicWallpaperTools.exe"

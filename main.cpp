@@ -60,9 +60,9 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic Wallpaper配置文件（.dp）\0*.dp\0","Dynamic Wallpaper設定檔（.dp）\0*.dp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},//9
 	{
-		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6\nTranslator: Baidu Translate",
-		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6\n翻译器：百度翻译",
-		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6\n翻譯器：百度翻譯"
+		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.1\nTranslator: Baidu Translate",
+		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.1\n翻译器：百度翻译",
+		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.1\n翻譯器：百度翻譯"
 	},
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
@@ -117,11 +117,18 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Do not mute and start","不静音并启动","不靜音並啟動"},//61
 	{"Video Path: \r\n\r\nSupports: \r\nLocal Video","视频路径：\r\n\r\n支持项：\r\n本地视频","視頻路徑：\r\n\r\n支持項：\r\n本地視頻"},//62
 	{"Launch","启动","啟動"},//63
+	{"Save a configuration file to save wallpaper settings.","保存一个配置文件以保存壁纸设置。","保存一個設定檔以保存桌面設定。"},//64
+	{"Modify a configuration file to change wallpaper settings.","修改一个配置文件以更改壁纸设置。","修改一個設定檔以更改桌面設定。"},
+	{"Open a configuration file to start dynamic wallpaper.","打开一个配置文件以启动动态壁纸。","打開一個設定檔以啟動動態桌面。"},
+	{"Close all windows created by mshta.exe to stop dynamic wallpapers.","关闭所有mshta.exe创建的窗口以停止动态壁纸。","關閉所有mshta.exe創建的視窗以停止動態桌面。"},
+	{"Open 'About'","打开“关于”","打開“關於”"},//68
+	{"Set Default Font","设置默认字体","設定預設字體"},//69
+	{"Font setting completed, font name: ","字体已设置完成，字体名称：","字體已設定完成，字體名稱："},//70
+	{". After restarting the program, the font will take effect!","，重新启动程序后字体将生效！","，重新啟動程式後字體將生效！"},//71
 };
-
 //left->top->right->bottom
 RECT BtnPos[5]={
-	{20,20,220,70},{240,20,440,70},{460,20,660,70},{20,90,220,140},{240,90,660,140}
+	{20,20,220,80},{240,20,440,80},{460,20,660,80},{20,90,220,150},{240,90,660,150}
 };//所有按钮的位置
 
 char* StringCat(char *Str1,const char *Str2){//没用的东西 
@@ -141,7 +148,6 @@ char* GetString4ThisLang(UINT index){
 	}
 	return MUIText[index][LangID];
 }
-
 LONG GetRegValue(HKEY key,const char path[],const char keyname[],char value[]){//获取注册表的某个值 （无需管理员） 
     HKEY hKey;
     BYTE byData[255];
@@ -406,6 +412,53 @@ DWORD WINAPI DwpThread(LPVOID lparam){//核心线程
 	PutToDesktop(FindWindow("HTML Application Host Window Class", 0));
 	return 0;
 }
+
+int SetDefFont(LOGFONTA *lpLogFont){
+	CHOOSEFONTA cf;
+	LOGFONTA lf;
+	ZeroMemory(&cf, sizeof(cf));
+	cf.lStructSize = sizeof (cf);
+	cf.lpLogFont = &lf;
+	cf.Flags = CF_EFFECTS|CF_SCREENFONTS | CF_FORCEFONTEXIST|CF_NOSCRIPTSEL|CF_NOVERTFONTS;
+	WINBOOL RES=ChooseFont(&cf);
+	*lpLogFont=lf;
+	if(RES!=TRUE){
+		return RES;
+	}
+	else{
+		hFont=CreateFont(lf.lfHeight,lf.lfWidth,lf.lfEscapement,lf.lfOrientation,lf.lfWeight,lf.lfItalic,lf.lfUnderline,lf.lfStrikeOut,lf.lfCharSet,lf.lfOutPrecision,lf.lfClipPrecision,lf.lfQuality,lf.lfPitchAndFamily,lf.lfFaceName);
+		char TempStr[1145];
+		sprintf(TempStr,"%d",lf.lfCharSet);
+		WritePrivateProfileString("Font","lfCharSet",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfClipPrecision);
+		WritePrivateProfileString("Font","lfClipPrecision",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfEscapement);
+		WritePrivateProfileString("Font","lfEscapement",TempStr,ConfigFile);
+		WritePrivateProfileString("Font","lfFaceName",lf.lfFaceName,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfHeight);
+		WritePrivateProfileString("Font","lflfHeight",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfItalic);
+		WritePrivateProfileString("Font","lfItalic",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfOrientation);
+		WritePrivateProfileString("Font","lfOrientation",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfOutPrecision);
+		WritePrivateProfileString("Font","lfOutPrecision",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfPitchAndFamily);
+		WritePrivateProfileString("Font","lfPitchAndFamily",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfQuality);
+		WritePrivateProfileString("Font","lfQuality",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfStrikeOut);
+		WritePrivateProfileString("Font","lfStrikeOut",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfUnderline);
+		WritePrivateProfileString("Font","lfUnderline",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfWeight);
+		WritePrivateProfileString("Font","lfWeight",TempStr,ConfigFile);
+		sprintf(TempStr,"%d",lf.lfWidth);
+		WritePrivateProfileString("Font","lfWidth",TempStr,ConfigFile);
+		return RES;
+	}
+}
+
 bool isRunningAsAdmin() {//判定是否在管理员身份下运行 
     HANDLE hToken;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) return false;//获取令牌 
@@ -1092,6 +1145,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetDlgItemText(hFB,29,str_path);
 					break;
 				}
+				case 34:{
+					LOGFONTA lf;
+					if(SetDefFont(&lf)==TRUE){
+						char TempStr[1145];
+						sprintf(TempStr,"%s%s%s",GetString4ThisLang(70),lf.lfFaceName,GetString4ThisLang(71));
+						MessageBox(HWND_,TempStr,"Information",MB_ICONINFORMATION|MB_OK);
+					}
+					break;
+				}
 			}
 			break;
 		}
@@ -1246,6 +1308,45 @@ int main(int argc,char *argv[]) {//main函数
 		else break;
 	}
 	sprintf(ConfigFile,"%s\\Config.ini",programName);
+	if(GetPrivateProfileInt("Main","FirstSetup",false,ConfigFile)==false){
+		LOGFONT lf;
+		if(SetDefFont(&lf)!=TRUE){
+			MessageBox(NULL,"Please select a font to continue initialization. If you want to try again, please restart this program.","Error",MB_ICONWARNING|MB_OK);
+			return 0;
+		}
+		else WritePrivateProfileString("Main","FirstSetup","1",ConfigFile);
+	}
+	else{
+		LOGFONTA lf;
+		lf.lfCharSet=GetPrivateProfileInt("Font","lfCharSet",0,ConfigFile);
+		lf.lfClipPrecision=GetPrivateProfileInt("Font","lfClipPrecision",0,ConfigFile);
+		lf.lfEscapement=GetPrivateProfileInt("Font","lfEscapement",0,ConfigFile);
+		GetPrivateProfileString("Font","lfFaceName",NULL,lf.lfFaceName,24,ConfigFile);
+		lf.lfHeight=GetPrivateProfileInt("Font","lfHeight",0,ConfigFile);
+		lf.lfItalic=GetPrivateProfileInt("Font","lfItalic",0,ConfigFile);
+		lf.lfOrientation=GetPrivateProfileInt("Font","lfOrientation",0,ConfigFile);
+		lf.lfOutPrecision=GetPrivateProfileInt("Font","lfOutPrecision",0,ConfigFile);
+		lf.lfPitchAndFamily=GetPrivateProfileInt("Font","lfPitchAndFamily",0,ConfigFile);
+		lf.lfQuality=GetPrivateProfileInt("Font","lfQuality",0,ConfigFile);
+		lf.lfStrikeOut=GetPrivateProfileInt("Font","lfStrikeOut",0,ConfigFile);
+		lf.lfUnderline=GetPrivateProfileInt("Font","lfUnderline",0,ConfigFile);
+		lf.lfWeight=GetPrivateProfileInt("Font","lfWeight",0,ConfigFile);
+		lf.lfWidth=GetPrivateProfileInt("Font","lfWidth",0,ConfigFile);
+		hFont=CreateFont(lf.lfHeight,lf.lfWidth,
+			lf.lfEscapement,
+			lf.lfOrientation,
+			lf.lfWeight,
+			lf.lfItalic,
+			lf.lfUnderline,
+			lf.lfStrikeOut,
+			lf.lfCharSet,
+			lf.lfOutPrecision,
+			lf.lfClipPrecision,
+			lf.lfQuality,
+			lf.lfPitchAndFamily,
+			lf.lfFaceName
+		);
+	}
 	if(hasCmd==true){
 		if(FindWindow("DWPT_PRIVATECLASS",0)!=NULL) return 0;
 		else{
@@ -1372,6 +1473,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FileMenu,GetString4ThisLang(27));//文件 
 	AppendMenu(FuncMenu,MF_STRING,15,GetString4ThisLang(54));//打开WinWatcher工具 
 	AppendMenu(FuncMenu,MF_STRING,27,GetString4ThisLang(56));//生成 GUID \ UUID
+	AppendMenu(FuncMenu,MF_STRING,34,GetString4ThisLang(69));//设置默认字体
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//功能 
 	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//如何使用 
 	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));//弹出关于信息框 
@@ -1418,10 +1520,11 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	    else tie.pszText=GetString4ThisLang(58);
 		if(i==0){
 			hConfig=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
-			for(int i=0;i<5;i++){//记住：Dev C++编译时要在 项目[P] -> 项目属性[O] 里面选中"支持 Windows XP 主题"，否则难看到去世！！！ 
-				HWND hwnd=CreateWindow("Button",GetString4ThisLang(i)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE|BS_COMMANDLINK,BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,hConfig,(HMENU)BtnWparam[i],NULL,NULL);
+			for(int j=0;j<5;j++){//记住：Dev C++编译时要在 项目[P] -> 项目属性[O] 里面选中"支持 Windows XP 主题"，否则难看到去世！！！ 
+				HWND hwnd=CreateWindow("Button",GetString4ThisLang(j)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE|BS_COMMANDLINK,BtnPos[j].left,BtnPos[j].top,BtnPos[j].right-BtnPos[j].left,BtnPos[j].bottom-BtnPos[j].top,hConfig,(HMENU)BtnWparam[j],NULL,NULL);
 				//CreateButton(BtnName[i],BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,HWND_,(HMENU)BtnWparam[i],NULL,NULL);
 				SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
+				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)GetString4ThisLang(64+j));
 			}
 			ShowWindow(hConfig,SW_SHOW);
 		}
