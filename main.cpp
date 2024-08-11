@@ -39,10 +39,10 @@ DWORD dw/*打开文件时的标记*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOV
 HANDLE hFile;//文件句柄 
 HDC hdc=GetDC(0);//获取桌面的HDC（用来搞窗口选择器） 
 int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/,LangID=IL_UNSET/*语言ID*/;
-bool quietMode=false;//是否启用安静模式（在启动dwp文件中） 
+bool quietMode=false;//是否启用安静模式（在启动dp文件中） 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow,hFB;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATA nid;//托盘图标数据 
-HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
+HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
 typedef BOOL WINAPI (*SPDA)(VOID);
 SPDA SetProcessDPIAwarev;//设置该进程的DPI，不设会很丑且比例不太对 
@@ -60,20 +60,20 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic Wallpaper配置文件（.dp）\0*.dp\0","Dynamic Wallpaper設定檔（.dp）\0*.dp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},//9
 	{
-		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.1\nTranslator: Baidu Translate",
-		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.1\n翻译器：百度翻译",
-		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.1\n翻譯器：百度翻譯"
-	},
+		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.2\nTranslator: Baidu Translate",
+		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.2\n翻译器：百度翻译",
+		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.2\n翻譯器：百度翻譯"
+	},//10
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
 	{"Wallplaper Config","壁纸配置","桌面配寘"},
 	{"Global settings","全局设置","全域設定"},
-	{"Self start upon startup","开机自启动","開機自啟動"},
+	{"Self start upon startup","开机自启动","開機自啟動"},//15
 	{"Current default item:","当前默认项：","當前默認項："},
 	{"Edit","编辑","編輯"},
 	{"Registry modification failed!","注册表修改失败！","註冊表修改失敗！"},//18
 	{"Do you want to restart explorer.exe? This may result in a black screen for a while. If Win11 users set a right angle, it will turn back into a rounded corner. Please make a careful decision!","是否需要重启explorer.exe？这可能会黑屏一会儿，Win11用户如果设置了直角会变回圆角，请慎重决定！","是否需要重啓explorer.exe？ 這可能會黑屏一會兒，Win11用戶如果設定了直角會變回圓角，請慎重决定！"},
-	{"Quit(&Q)","退出（&Q）","退出（&Q）"},
+	{"Quit(&Q)","退出（&Q）","退出（&Q）"},//20
 	{"Registry modification completed!","注册表修改完成！","註冊表修改完成！"},
 	{"Do you need to set this configuration item as the default (including startup default)：","是否需要将这个配置项设置为默认项（包括启动默认项）：","是否需要將這個配寘項設定為默認項（包括啟動默認項）："},
 	{"explorer.exe has been restarted and completed, you can continue your work now!","explorer.exe已重启完成，您可以继续您的工作了！","explorer.exe已重啓完成，您可以繼續您的工作了！"},
@@ -83,17 +83,17 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Operation(&O)","操作（&O）","操作（&O）"},//27
 	{"About(&A)","关于（&A）","關於（&A）"},
 	{"End dynamic wallpaper(&E)","结束动态壁纸（&E）","結束動態桌面（&E）"},
-	{"Open and...(&C)","打开并...（&C）","打開並...（&C）"},
+	{"Open and...(&C)","打开并...（&C）","打開並...（&C）"},//30
 	{"Open the default item and...(&D)","打开默认项并...（&D）","打開默認項並...（&D）"},
 	{"The program has already started, please do not execute it again!","程序已经启动了，请不要再次执行！","程式已經啟動了，請不要再次執行！"},
 	{"The original value was: ","原来的值为：","原來的值為："},
 	{"\nDo you want to modify it?","\n是否要修改？","\n是否要修改？"},
-	{"Please select: ","请选择：","請選擇："},
+	{"Please select: ","请选择：","請選擇："},//35
 	{"The video path has been modified!","视频路径已修改完成！","視頻路徑已修改完成！"},//36
 	{"The modification of the video path has been canceled...","已取消修改视频路径。。。","已取消修改視頻路徑。。。"},
 	{"The original value for playing sound when using dynamic wallpapers is:","原来是否在使用动态壁纸时播放声音的值为：","原來是否在使用動態桌面時播放聲音的值為："},
 	{"Yes","是","否"},
-	{"No","否","否"},
+	{"No","否","否"},//40
 	{"\nPlease select: ","\n请选择：","\n請選擇："},
 	{"Do you want to save this modification?","是否要保存这次的修改？","是否要保存這次的修改？"},
 	{"Do you want to apply it now?","是否要立即应用： ","是否要立即應用？"},
@@ -101,9 +101,9 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"How to use it?","如何使用？","如何使用？"},//45
 	{"Advanced Options","高级选项","高級選項"},
 	{"Set","设置","設置"},
-	{"Set any window as wallpaper (Repealed)","将任意窗口设置为壁纸（已废除）","將任意視窗設定為桌面（已廢除）"},
+	{"Set any window as wallpaper (Unsafe)","将任意窗口设置为壁纸（不安全）","將任意視窗設定為桌面（不安全）"},
 	{"Title of Window: ","窗口标题：","視窗標題："},
-	{"Class Name of Window: ","窗口类名：","視窗類名："},
+	{"Class Name of Window: ","窗口类名：","視窗類名："},//50
 	{"Boss key:","老板键：","老闆鍵："},
 	{"Histroy","历史","歷史"},
 	{"Tools (&T)","工具（&T）","工具（&T）"},
@@ -118,14 +118,32 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Video Path: \r\n\r\nSupports: \r\nLocal Video","视频路径：\r\n\r\n支持项：\r\n本地视频","視頻路徑：\r\n\r\n支持項：\r\n本地視頻"},//62
 	{"Launch","启动","啟動"},//63
 	{"Save a configuration file to save wallpaper settings.","保存一个配置文件以保存壁纸设置。","保存一個設定檔以保存桌面設定。"},//64
-	{"Modify a configuration file to change wallpaper settings.","修改一个配置文件以更改壁纸设置。","修改一個設定檔以更改桌面設定。"},
+	{"Modify a configuration file to change wallpaper settings.","修改一个配置文件以更改壁纸设置。","修改一個設定檔以更改桌面設定。"},//65
 	{"Open a configuration file to start dynamic wallpaper.","打开一个配置文件以启动动态壁纸。","打開一個設定檔以啟動動態桌面。"},
 	{"Close all windows created by mshta.exe to stop dynamic wallpapers.","关闭所有mshta.exe创建的窗口以停止动态壁纸。","關閉所有mshta.exe創建的視窗以停止動態桌面。"},
 	{"Open 'About'","打开“关于”","打開“關於”"},//68
 	{"Set Default Font","设置默认字体","設定預設字體"},//69
 	{"Font setting completed, font name: ","字体已设置完成，字体名称：","字體已設定完成，字體名稱："},//70
 	{". After restarting the program, the font will take effect!","，重新启动程序后字体将生效！","，重新啟動程式後字體將生效！"},//71
+	{"Please select a font to continue initialization. If you want to try again, please restart this program.","请选择一个字体以继续初始化，如果您要重试，请重新启动本程序。","請選擇一個字體以繼續初始化，如果您要重試，請重新啟動本程式。"},//72
 };
+/*
+wchar_t NoteText[][3][250]={{L"\x53\x61\x76\x65\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x73\x61\x76\x65\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x20\x73\x65\x74\x74\x69\x6E\x67\x73\x2E",
+L"\xE4\xBF\x9D\xE5\xAD\x98\xE4\xB8\x80\xE4\xB8\xAA\xE9\x85\x8D\xE7\xBD\xAE\xE6\x96\x87\xE4\xBB\xB6\xE4\xBB\xA5\xE4\xBF\x9D\xE5\xAD\x98\xE5\xA3\x81\xE7\xBA\xB8\xE8\xAE\xBE\xE7\xBD\xAE\xE3\x80\x82",
+L"\xE4\xBF\x9D\xE5\xAD\x98\xE4\xB8\x80\xE5\x80\x8B\xE8\xA8\xAD\xE5\xAE\x9A\xE6\xAA\x94\xE4\xBB\xA5\xE4\xBF\x9D\xE5\xAD\x98\xE6\xA1\x8C\xE9\x9D\xA2\xE8\xA8\xAD\xE5\xAE\x9A\xE3\x80\x82\x0D"},
+{L"\x4D\x6F\x64\x69\x66\x79\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x63\x68\x61\x6E\x67\x65\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x20\x73\x65\x74\x74\x69\x6E\x67\x73\x2E",
+L"\xE4\xBF\xAE\xE6\x94\xB9\xE4\xB8\x80\xE4\xB8\xAA\xE9\x85\x8D\xE7\xBD\xAE\xE6\x96\x87\xE4\xBB\xB6\xE4\xBB\xA5\xE6\x9B\xB4\xE6\x94\xB9\xE5\xA3\x81\xE7\xBA\xB8\xE8\xAE\xBE\xE7\xBD\xAE\xE3\x80\x82",
+L"\xE4\xBF\xAE\xE6\x94\xB9\xE4\xB8\x80\xE5\x80\x8B\xE8\xA8\xAD\xE5\xAE\x9A\xE6\xAA\x94\xE4\xBB\xA5\xE6\x9B\xB4\xE6\x94\xB9\xE6\xA1\x8C\xE9\x9D\xA2\xE8\xA8\xAD\xE5\xAE\x9A\xE3\x80\x82\x0D"},
+{L"\x4F\x70\x65\x6E\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x73\x74\x61\x72\x74\x20\x64\x79\x6E\x61\x6D\x69\x63\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x2E",
+L"\xE6\x89\x93\xE5\xBC\x80\xE4\xB8\x80\xE4\xB8\xAA\xE9\x85\x8D\xE7\xBD\xAE\xE6\x96\x87\xE4\xBB\xB6\xE4\xBB\xA5\xE5\x90\xAF\xE5\x8A\xA8\xE5\x8A\xA8\xE6\x80\x81\xE5\xA3\x81\xE7\xBA\xB8\xE3\x80\x82",
+L"\xE6\x89\x93\xE9\x96\x8B\xE4\xB8\x80\xE5\x80\x8B\xE8\xA8\xAD\xE5\xAE\x9A\xE6\xAA\x94\xE4\xBB\xA5\xE5\x95\x9F\xE5\x8B\x95\xE5\x8B\x95\xE6\x85\x8B\xE6\xA1\x8C\xE9\x9D\xA2\xE3\x80\x82\x0D\x0A\x43\x6C\x6F\x73\x65"},
+{L"\x61\x6C\x6C\x20\x77\x69\x6E\x64\x6F\x77\x73\x20\x63\x72\x65\x61\x74\x65\x64\x20\x62\x79\x20\x6D\x73\x68\x74\x61\x2E\x65\x78\x65\x20\x74\x6F\x20\x73\x74\x6F\x70\x20\x64\x79\x6E\x61\x6D\x69\x63\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x73\2E",
+L"\xE5\x85\xB3\xE9\x97\xAD\xE6\x89\x80\xE6\x9C\x89\x6D\x73\x68\x74\x61\x2E\x65\x78\x65\xE5\x88\x9B\xE5\xBB\xBA\xE7\x9A\x84\xE7\xAA\x97\xE5\x8F\xA3\xE4\xBB\xA5\xE5\x81\x9C\xE6\xAD\xA2\xE5\x8A\xA8\xE6\x80\x81\xE5\xA3\x81\xE7\xBA\xB8\xE3\x80\x82",
+L"\xE9\x97\x9C\xE9\x96\x89\xE6\x89\x80\xE6\x9C\x89\x6D\x73\x68\x74\x61\x2E\x65\x78\x65\xE5\x89\xB5\xE5\xBB\xBA\xE7\x9A\x84\xE8\xA6\x96\xE7\xAA\x97\xE4\xBB\xA5\xE5\x81\x9C\xE6\xAD\xA2\xE5\x8B\x95\xE6\x85\x8B\xE6\xA1\x8C\xE9\x9D\xA2\xE3\x80\x82\x0D"},
+{L"\x4F\x70\x65\x6E\x20\x27\x41\x62\x6F\x75\x74\x27",
+L"\xE6\x89\x93\xE5\xBC\x80\xE2\x80\x9C\xE5\x85\xB3\xE4\xBA\x8E\xE2\x80\x9D",
+L"\xE6\x89\x93\xE9\x96\x8B\xE2\x80\x9C\xE9\x97\x9C\xE6\x96\xBC\xE2\x80\x9D"}};*/
+
 //left->top->right->bottom
 RECT BtnPos[5]={
 	{20,20,220,80},{240,20,440,80},{460,20,660,80},{20,90,220,150},{240,90,660,150}
@@ -457,6 +475,7 @@ int SetDefFont(LOGFONTA *lpLogFont){
 		WritePrivateProfileString("Font","lfWidth",TempStr,ConfigFile);
 		return RES;
 	}
+	return RES;
 }
 
 bool isRunningAsAdmin() {//判定是否在管理员身份下运行 
@@ -542,6 +561,7 @@ DWORD WINAPI FindWindowProcess(LPVOID lparam){//查找窗口的线程
 	}
 	SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(HInstance,"IDI_SELECTUNUSE"));
 	//RedrawWindow(0,NULL,NULL,RDW_ERASE);
+	return 0; 
 } 
 void StartDwp(const char PathA[],bool Quiet){//创建启动Dwp进程 
 	quietMode=Quiet;
@@ -1154,12 +1174,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					break;
 				}
+				case 35:{
+					if(IsDlgButtonChecked(hSet,35)==TRUE){
+						CheckDlgButton(hSet,35,BST_UNCHECKED);
+						WritePrivateProfileString("Main","DevMode","0",ConfigFile);
+						EnableMenuItem(FuncMenu,15,MF_DISABLED);
+						EnableMenuItem(FuncMenu,27,MF_DISABLED);
+					}
+					else{
+						if(MessageBox(hwnd,"Warning! You are performing a critical operation, please carefully decide whether to activate developer mode!","Warning",MB_ICONWARNING|MB_YESNO)==6){
+							CheckDlgButton(hSet,35,BST_CHECKED);
+							WritePrivateProfileString("Main","DevMode","1",ConfigFile);
+							EnableMenuItem(FuncMenu,15,MF_ENABLED);
+							EnableMenuItem(FuncMenu,27,MF_ENABLED);
+						}
+					}
+					break;
+				}
 			}
 			break;
 		}
 		case WM_SYSCOMMAND:{
 			if(LOWORD(wParam)==11||LOWORD(wParam)==4) return WndProc(hwnd,WM_COMMAND,wParam,lParam);
-			else return DefWindowProc(hwnd, Message, wParam, lParam);
+			return DefWindowProc(hwnd, Message, wParam, lParam);
 			break;
 		}
 		case WM_NOTIFY:{
@@ -1181,7 +1218,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					else if(result==2){
 						ShowWindow(hFB,SW_HIDE);
 						ShowWindow(hConfig,SW_HIDE);
-						ShowWindow(hAnyWindow,SW_SHOW);
+						ShowWindow(hAnyWindow,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==0)?SW_HIDE:SW_SHOW));
 						ShowWindow(hSet,SW_HIDE);
 					}
 					else if(result==3){
@@ -1311,7 +1348,7 @@ int main(int argc,char *argv[]) {//main函数
 	if(GetPrivateProfileInt("Main","FirstSetup",false,ConfigFile)==false){
 		LOGFONT lf;
 		if(SetDefFont(&lf)!=TRUE){
-			MessageBox(NULL,"Please select a font to continue initialization. If you want to try again, please restart this program.","Error",MB_ICONWARNING|MB_OK);
+			MessageBox(NULL,GetString4ThisLang(72),"Error",MB_ICONWARNING|MB_OK);
 			return 0;
 		}
 		else WritePrivateProfileString("Main","FirstSetup","1",ConfigFile);
@@ -1454,7 +1491,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		AppendMenu(HistroyMenu,MF_STRING,16+i,path); 
 	}
 	
-	HMENU menu=CreateMenu(),OPEN=CreatePopupMenu(),AboutMenu=CreatePopupMenu(),DefMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu();//添加菜单项 
+	HMENU menu=CreateMenu(),OPEN=CreatePopupMenu(),AboutMenu=CreatePopupMenu(),DefMenu=CreatePopupMenu();//添加菜单项 
 	GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","BLAS",RETURN);//获取注册表项 
 	AppendMenu(FileMenu,((strcmp(RETURN,"true")==0)?MF_CHECKED:MF_UNCHECKED),10,GetString4ThisLang(15));//开机自启动项 
 	AppendMenu(OPEN,MF_STRING,2,GetString4ThisLang(17));//编辑配置文件 
@@ -1471,8 +1508,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(FileMenu,MF_STRING,5,GetString4ThisLang(29));//结束动态壁纸 
 	AppendMenu(FileMenu,MF_STRING,4,GetString4ThisLang(20));//退出 
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FileMenu,GetString4ThisLang(27));//文件 
-	AppendMenu(FuncMenu,MF_STRING,15,GetString4ThisLang(54));//打开WinWatcher工具 
-	AppendMenu(FuncMenu,MF_STRING,27,GetString4ThisLang(56));//生成 GUID \ UUID
+	AppendMenu(FuncMenu,MF_STRING|((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==true)?MF_ENABLED:MF_DISABLED),15,GetString4ThisLang(54));//打开WinWatcher工具 
+	AppendMenu(FuncMenu,MF_STRING|((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==true)?MF_ENABLED:MF_DISABLED),27,GetString4ThisLang(56));//生成 GUID \ UUID
 	AppendMenu(FuncMenu,MF_STRING,34,GetString4ThisLang(69));//设置默认字体
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//功能 
 	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//如何使用 
@@ -1491,15 +1528,15 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		MessageBox(NULL, "Window Creation Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
-	
+	/*
 	MENUINFO menuInfo={0};
 	menuInfo.cbSize=sizeof(MENUINFO);
 	menuInfo.fMask=MIM_BACKGROUND;
 	menuInfo.hbrBack=CreateSolidBrush(RGB(44,44,44));
-	SetMenuInfo(GetMenu(HWND_),&menuInfo);
-	DrawMenuBar(HWND_);
-	SendMessage(HWND_, WM_MENUSELECT, (WPARAM)menu, MAKELPARAM(0, MF_BYPOSITION));
-	DeleteObject(menuInfo.hbrBack);
+	SetMenuInfo(FileMenu,&menuInfo);
+	DrawMenuBar(HWND_);*/
+	//SendMessage(HWND_, WM_MENUSELECT, (WPARAM)menu, MAKELPARAM(0, MF_BYPOSITION));
+	//DeleteObject(menuInfo.hbrBack);
 	
 	//CreateWindow("Button","BUTTON",WS_CHILD|WS_VISIBLE,20,200,100,100,HWND_,NULL,NULL,NULL); 
 	TCITEM tie;
@@ -1525,40 +1562,43 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 				//CreateButton(BtnName[i],BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,HWND_,(HMENU)BtnWparam[i],NULL,NULL);
 				SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)GetString4ThisLang(64+j));
+				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)NoteText[j][0]);
 			}
 			ShowWindow(hConfig,SW_SHOW);
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			HWND hwnd=CreateWindow("button",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,760,25,hSet,(HMENU)10,NULL,NULL);
+			CreateWindow("button","Developer Options",WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,760,25,hSet,(HMENU)35,NULL,NULL);
+			SendDlgItemMessageA(hSet,35,WM_SETFONT,(WPARAM)hFont,NULL);
+			CheckDlgButton(hSet,35,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==1)?BST_CHECKED:BST_UNCHECKED));//设置CheckBox是否被确认 
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","BLAS",RETURN);
 			CheckDlgButton(hSet,10,((strcmp(RETURN,"true")==0)?BST_CHECKED:BST_UNCHECKED));//设置CheckBox是否被确认 
 			GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",RETURN);
 			char str[1145];
-			strcpy(str,GetString4ThisLang(16));
-			strcat(str,RETURN);
+			sprintf(str,"%s%s",GetString4ThisLang(16),RETURN);
 			hStaticDef=CreateWindow("STATIC",str,WS_CHILD|WS_VISIBLE,20,60,660,25,hSet,(HMENU)100,NULL,NULL);
 			SendMessage(hStaticDef,WM_SETFONT,(WPARAM)hFont,NULL);
 			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
 			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,700,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,680,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 
 		}
 		else if(i==2){
-			/*hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE|WS_DISABLED,0,30,800,360,hTab,NULL,NULL,NULL);	
+			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
 			ShowWindow(hAnyWindow,SW_HIDE);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX|WS_DISABLED,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			hsti=CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON|WS_DISABLED,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			hsti=CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
 			SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(hINstance,"IDI_SELECTUNUSE"));
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(49),WS_CHILD|WS_VISIBLE|WS_DISABLED,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
+			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
 				(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE|WS_DISABLED,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|WS_DISABLED,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-		*/}
+			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+		}
 		else if(i==3){
 			hFB=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			ShowWindow(hFB,SW_HIDE);
