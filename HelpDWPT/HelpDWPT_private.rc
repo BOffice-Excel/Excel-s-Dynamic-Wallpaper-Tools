@@ -16,8 +16,8 @@
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 0,0,6,1
-PRODUCTVERSION 0,0,6,1
+FILEVERSION 0,0,6,2
+PRODUCTVERSION 0,0,6,2
 FILETYPE VFT_DLL
 {
   BLOCK "StringFileInfo"
@@ -25,14 +25,14 @@ FILETYPE VFT_DLL
     BLOCK "080404E4"
     {
       VALUE "CompanyName", ""
-      VALUE "FileVersion", "0.0.6.1"
+      VALUE "FileVersion", "0.0.6.2"
       VALUE "FileDescription", "Developed using the Dev-C++ IDE"
       VALUE "InternalName", "DWPT∞Ô÷˙ø‚"
       VALUE "LegalCopyright", "∞Ê»®À˘”– Office-Excel"
       VALUE "LegalTrademarks", ""
       VALUE "OriginalFilename", "HelpDWPT.dll"
       VALUE "ProductName", "DWPT∞Ô÷˙ø‚"
-      VALUE "ProductVersion", "0.0.6.1"
+      VALUE "ProductVersion", "0.0.6.2"
     }
   }
   BLOCK "VarFileInfo"
