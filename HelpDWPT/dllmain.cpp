@@ -1,5 +1,4 @@
 /* Replace "dll.h" with the name of your header */
-#define DLLIMPORT __declspec(dllexport)
 #include <windows.h>
 #include <stdio.h>
 #include "dll.h"
@@ -375,6 +374,10 @@ extern "C" DLLIMPORT void WinWatcher(){
 	}
 	//EnableWindow(hwnd,true);
 	return;
+}
+
+extern "C" DLLIMPORT bool GetPerm(short Type){
+	return 1;//空函数，未被使用 
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID lpvReserved)
