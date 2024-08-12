@@ -42,7 +42,7 @@ int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/
 bool quietMode=false;//是否启用安静模式（在启动dp文件中） 
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow,hFB;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATA nid;//托盘图标数据 
-HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
+HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu(),LangMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
 typedef BOOL WINAPI (*SPDA)(VOID);
 SPDA SetProcessDPIAwarev;//设置该进程的DPI，不设会很丑且比例不太对 
@@ -60,9 +60,9 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic Wallpaper配置文件（.dp）\0*.dp\0","Dynamic Wallpaper設定檔（.dp）\0*.dp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},//9
 	{
-		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.2\nTranslator: Baidu Translate",
-		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.2\n翻译器：百度翻译",
-		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.2\n翻譯器：百度翻譯"
+		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.3\nTranslator: Baidu Translate",
+		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.3\n翻译器：百度翻译",
+		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.3\n翻譯器：百度翻譯"
 	},//10
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
@@ -126,6 +126,11 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Font setting completed, font name: ","字体已设置完成，字体名称：","字體已設定完成，字體名稱："},//70
 	{". After restarting the program, the font will take effect!","，重新启动程序后字体将生效！","，重新啟動程式後字體將生效！"},//71
 	{"Please select a font to continue initialization. If you want to try again, please restart this program.","请选择一个字体以继续初始化，如果您要重试，请重新启动本程序。","請選擇一個字體以繼續初始化，如果您要重試，請重新啟動本程式。"},//72
+	{"Language","语言","語言"},//73
+	{"English","英语","英語"},//74
+	{"Chinese Simplified","简体中文","簡體中文"},//75
+	{"Chinese Traditional","繁体中文","繁體中文"},//76
+	{"The language has been updated and will take effect after restarting the program!","语言已更新，重启程序后将生效！","語言已更新，重啓程式後將生效！"},//77
 };
 /*
 wchar_t NoteText[][3][250]={{L"\x53\x61\x76\x65\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x73\x61\x76\x65\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x20\x73\x65\x74\x74\x69\x6E\x67\x73\x2E",
@@ -1191,6 +1196,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					break;
 				}
+				case 36:{
+					MessageBox(hwnd,GetString4ThisLang(77),"Information",MB_ICONINFORMATION);
+					WritePrivateProfileString("Main","Lang","0",ConfigFile);
+					CheckMenuItem(LangMenu,36,MF_CHECKED);
+					CheckMenuItem(LangMenu,37,MF_UNCHECKED);
+					CheckMenuItem(LangMenu,38,MF_UNCHECKED);
+					break;
+				} 
+				case 37:{
+					MessageBox(hwnd,GetString4ThisLang(77),"Information",MB_ICONINFORMATION);
+					WritePrivateProfileString("Main","Lang","1",ConfigFile);
+					CheckMenuItem(LangMenu,36,MF_UNCHECKED);
+					CheckMenuItem(LangMenu,37,MF_CHECKED);
+					CheckMenuItem(LangMenu,38,MF_UNCHECKED);
+					break;
+				}
+				case 38:{
+					MessageBox(hwnd,GetString4ThisLang(77),"Information",MB_ICONINFORMATION);
+					WritePrivateProfileString("Main","Lang","2",ConfigFile);
+					CheckMenuItem(LangMenu,36,MF_UNCHECKED);
+					CheckMenuItem(LangMenu,37,MF_UNCHECKED);
+					CheckMenuItem(LangMenu,38,MF_CHECKED);
+					break;
+				}
 			}
 			break;
 		}
@@ -1345,6 +1374,7 @@ int main(int argc,char *argv[]) {//main函数
 		else break;
 	}
 	sprintf(ConfigFile,"%s\\Config.ini",programName);
+	LangID=GetPrivateProfileInt("Main","Lang",-1,ConfigFile);
 	if(GetPrivateProfileInt("Main","FirstSetup",false,ConfigFile)==false){
 		LOGFONT lf;
 		if(SetDefFont(&lf)!=TRUE){
@@ -1511,7 +1541,11 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(FuncMenu,MF_STRING|((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==true)?MF_ENABLED:MF_DISABLED),15,GetString4ThisLang(54));//打开WinWatcher工具 
 	AppendMenu(FuncMenu,MF_STRING|((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==true)?MF_ENABLED:MF_DISABLED),27,GetString4ThisLang(56));//生成 GUID \ UUID
 	AppendMenu(FuncMenu,MF_STRING,34,GetString4ThisLang(69));//设置默认字体
-	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//功能 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//功能
+	AppendMenu(LangMenu,MF_STRING|((LangID==0)?MF_CHECKED:MF_UNCHECKED),36,GetString4ThisLang(74));//英语 
+	AppendMenu(LangMenu,MF_STRING|((LangID==1)?MF_CHECKED:MF_UNCHECKED),37,GetString4ThisLang(75));//简体中文 
+	AppendMenu(LangMenu,MF_STRING|((LangID==2)?MF_CHECKED:MF_UNCHECKED),38,GetString4ThisLang(76));//繁体中文 
+	AppendMenu(menu,MF_POPUP,(UINT_PTR)LangMenu,GetString4ThisLang(73));//语言 
 	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//如何使用 
 	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));//弹出关于信息框 
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)AboutMenu,GetString4ThisLang(26));//关于 
