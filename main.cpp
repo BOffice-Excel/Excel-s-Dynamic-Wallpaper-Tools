@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <io.h>
 #include <commctrl.h> 
-//#include <dwmapi.h>
 #define DLLIMPORT __declspec(dllexport)
 #include "HelpDWPT\dll.h" //HelpDWPT.dll的库文件 
+#undef BS_OWNERDRAW
+#define BS_OWNERDRAW 0 
 //#pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
 #define key_press(key) ((GetAsyncKeyState(key)&0x8000)?1:0)//定义按键检测函数 
 //#include "C:\Users\ywh11\Desktop\MyUI\dll.h"
@@ -60,9 +61,9 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic Wallpaper配置文件（.dp）\0*.dp\0","Dynamic Wallpaper設定檔（.dp）\0*.dp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},//9
 	{
-		"Programming: Office Excel\nReference video by occasionally a bit confused, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.3\nTranslator: Baidu Translate",
-		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.3\n翻译器：百度翻译",
-		"程式製作：Office-Excel\n參攷視頻by偶爾有點小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.3\n翻譯器：百度翻譯"
+		"Programming: Office Excel\nReference video by 偶尔有点小迷糊, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.4\nTranslator: Baidu Translate",
+		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.4\n翻译器：百度翻译",
+		"程式製作：Office-Excel\n參攷視頻 by 偶尔有点小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.4\n翻譯器：百度翻譯"
 	},//10
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
@@ -131,6 +132,7 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Chinese Simplified","简体中文","簡體中文"},//75
 	{"Chinese Traditional","繁体中文","繁體中文"},//76
 	{"The language has been updated and will take effect after restarting the program!","语言已更新，重启程序后将生效！","語言已更新，重啓程式後將生效！"},//77
+	{"The program has been started. Please don't run again!","程序已启动完成，请不要二次运行！","程式已啟動完成，請不要二次啟動！"},//78
 };
 /*
 wchar_t NoteText[][3][250]={{L"\x53\x61\x76\x65\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x73\x61\x76\x65\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x20\x73\x65\x74\x74\x69\x6E\x67\x73\x2E",
@@ -678,6 +680,46 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			break;
 		}
 		
+		case WM_CREATE:{
+			SetTimer(hwnd,1,100,NULL);
+			HMODULE hModule=GetModuleHandle("dwmapi.dll");
+			if(hModule){
+				bool Dark=true;
+				typedef VOID (*DSWA)(HWND,DWORD,LPCVOID,DWORD);
+				DSWA DwmSetWindowAttribute=(DSWA)GetProcAddress(hModule,"DwmSetWindowAttribute");
+				if(DwmSetWindowAttribute) DwmSetWindowAttribute(hwnd, 20,  &Dark, 4);
+			}
+			hModule=GetModuleHandle("uxtheme.dll");
+			if(hModule){
+				typedef VOID (*SPAM)(int);
+				SPAM SetPreferredAppMode=(SPAM)GetProcAddress(hModule,MAKEINTRESOURCE(135));
+				if(SetPreferredAppMode) SetPreferredAppMode(2);
+				typedef VOID (*FMT)();
+				FMT FlushMenuThemes=(FMT)GetProcAddress(hModule,MAKEINTRESOURCE(136));
+				if(FlushMenuThemes) FlushMenuThemes();
+				typedef VOID (*ADMW)(HWND,BOOLEAN);
+				ADMW AllowDarkModeForWindow=(ADMW)GetProcAddress(hModule,MAKEINTRESOURCE(133));
+				if(AllowDarkModeForWindow) AllowDarkModeForWindow(hwnd,TRUE);
+			}
+			break;
+		}
+		
+		case WM_DRAWITEM:{
+			DRAWITEMSTRUCT dis=*(LPDRAWITEMSTRUCT)lParam;
+			SetWindowLong(dis.hwndItem,GWL_STYLE,GetWindowLong(dis.hwndItem,GWL_STYLE)&(~BS_OWNERDRAW));
+			SendMessage(dis.hwndItem,WM_PAINT,NULL,NULL);
+			UpdateWindow(dis.hwndItem);
+			SetWindowLong(dis.hwndItem,GWL_STYLE,GetWindowLong(dis.hwndItem,GWL_STYLE)|(BS_OWNERDRAW));
+			/*BitBlt(dis.hDC,
+				0,0,
+				dis.rcItem.right,dis.rcItem.bottom,
+				dis.hDC,
+				dis.rcItem.left,dis.rcItem.top,
+				DSTINVERT
+			);*/
+			break;
+		}
+		
 		/*case WM_MOUSEMOVE: {//当鼠标移动时 
 			HDC DC=GetDC(hwnd);//获取HDC 
 			SelectObject(DC,hFont);
@@ -1111,8 +1153,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 							break;
 						}
 						for(int i=0;i<strlen(VPath);i++) if(VPath[i]==' ') SpaceVideo=true;
-						if(SpaceVideo) sprintf(Command,"\"%s\" -i false \"%s\"",ProP,VPath);
-						else sprintf(Command,"\"%s\" -i false %s",ProP,VPath);
+						if(SpaceVideo) sprintf(Command,"\"%s\" -f false \"%s\"",ProP,VPath);
+						else sprintf(Command,"\"%s\" -f false %s",ProP,VPath);
 					}
 					else{
 						GetDlgItemText(hFB,29,VPath,1140);
@@ -1223,6 +1265,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			}
 			break;
 		}
+		case WM_CTLCOLORBTN: 
+		case WM_CTLCOLORSTATIC:{
+			HBRUSH hbrBkgnd=NULL;
+	        HDC hdcStatic = (HDC) wParam;
+	        SetTextColor(hdcStatic, RGB(0,0,0));
+	        SetBkColor(hdcStatic, RGB(255,255,255));
+	        if (hbrBkgnd == NULL){
+	            hbrBkgnd = CreateSolidBrush(RGB(255,255,255));
+	        }
+	        return (INT_PTR)hbrBkgnd;
+        }
 		case WM_SYSCOMMAND:{
 			if(LOWORD(wParam)==11||LOWORD(wParam)==4) return WndProc(hwnd,WM_COMMAND,wParam,lParam);
 			return DefWindowProc(hwnd, Message, wParam, lParam);
@@ -1265,6 +1318,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			}
 			break;
 		}
+		case WM_TIMER:{
+			HDC hdc=GetDC(hwnd);
+			if(GetPixel(hdc,10,10)==RGB(0,0,0)) break;
+			RECT rect;GetWindowRect(hwnd,&rect);rect.bottom-=rect.top;rect.right-=rect.left;rect.left=rect.top=0;
+			InvertRect(hdc,&rect);
+			break;
+		}
 		default:
 			return DefWindowProc(hwnd, Message, wParam, lParam);//默认窗口过程 
 	}
@@ -1287,6 +1347,7 @@ LRESULT CALLBACK TrayNotificationCallback(HWND hWnd, UINT uMsg, WPARAM wParam, L
 				}
 				case WM_LBUTTONDOWN:{
 					ShowWindow(HWND_,SW_SHOW);
+					SwitchToThisWindow(HWND_,TRUE);
 					break;
 				}
 			}
@@ -1422,12 +1483,14 @@ int main(int argc,char *argv[]) {//main函数
 				NULL,//这个参数为什么需要我也不知道
 				CmdLine,//命令行
 				SW_HIDE//定义窗口展示方式，参数传给ShowWindow函数，这里为SW_SHOW
-			);		
+			);
 		}
 	}
 	if(FindWindow("DWPT_PRIVATECLASS",0)!=NULL){
 		//SetWindowPos(FindWindow("DWPT_PRIVATECLASS",0),0,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW);
 		MessageBox(NULL,GetString4ThisLang(32),"ERROR",MB_ICONWARNING|MB_OK); 
+		ShowWindow(FindWindow("DWPT_PRIVATECLASS",0),SW_SHOW);
+		SwitchToThisWindow(FindWindow("DWPT_PRIVATECLASS",0),TRUE);
 		return 0;
 	}
 	return winMain(
@@ -1485,7 +1548,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
     nid.hIcon = LoadIcon(hINstance,"A"); // 从资源加载图标
     strcpy(nid.szTip,"Dynamic Wallpaper Tools");
     strcpy(nid.szInfo, "^_^");
-    strcpy(nid.szInfoTitle,"程序已启动完成，请不要二次运行");//Toast Message Box
+    strcpy(nid.szInfoTitle,GetString4ThisLang(78));//Toast Message Box
     Shell_NotifyIcon(NIM_ADD,&nid);
     //Shell_NotifyIcon(NIM_SETVERSION, &nid);
 	
@@ -1503,7 +1566,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	wc.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
-	wc.hbrBackground = CreateSolidBrush(RGB(240,240,240))/*(HBRUSH)(COLOR_WINDOW + 1)*/;
+	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wc.lpszClassName = "DWPT_PRIVATECLASS";
 	wc.hIcon = LoadIcon(hINstance,"IDI_SELECTUNUSE"); /* Load a standard icon */
 	wc.hIconSm = LoadIcon(hINstance,"A"); /* use the name "A" to use the project icon */
@@ -1580,10 +1643,9 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
         0, 0, 800, 400, HWND_,(HMENU) 13, NULL, NULL);//创建Tab Control
     SendMessage(hTab,WM_SETFONT,(WPARAM)hFont,NULL);
 	
-	/*DWORD dwAttribute = 20;//DWMWA_USE_IMMERSIVE_DARK_MODE; // 设置暗色模式属性
-	BOOL bValue = TRUE; // 启用暗色模式
-	DwmSetWindowAttribute(HWND_, dwAttribute, &bValue, sizeof(dwAttribute)); // 设置窗口属性*/
-	
+	HMODULE hModule=GetModuleHandle("uxtheme.dll");
+	typedef VOID (*ADMW)(HWND,BOOLEAN);
+	ADMW AllowDarkModeForWindow=(ADMW)GetProcAddress(hModule,MAKEINTRESOURCE(133));
     for(int i=0;i<4;i++){//创建两个窗口和控件 
 		tie.mask = TCIF_TEXT;
 	    if(i<2) tie.pszText = GetString4ThisLang(13+i);//获取语言文本 
@@ -1599,6 +1661,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)NoteText[j][0]);
 			}
 			ShowWindow(hConfig,SW_SHOW);
+			for(int i=1;i<=40;i++) if(GetDlgItem(hConfig,i)) AllowDarkModeForWindow(GetDlgItem(hConfig,i),TRUE); 
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
@@ -1617,11 +1680,12 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
 			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,680,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 
-		}
+			for(int i=1;i<=40;i++) if(GetDlgItem(hSet,i)) AllowDarkModeForWindow(GetDlgItem(hSet,i),TRUE); 
+	}
 		else if(i==2){
 			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
 			ShowWindow(hAnyWindow,SW_HIDE);
@@ -1631,7 +1695,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
 				(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			for(int i=1;i<=40;i++) if(GetDlgItem(hAnyWindow,i)) AllowDarkModeForWindow(GetDlgItem(hAnyWindow,i),TRUE); 
 		}
 		else if(i==3){
 			hFB=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
@@ -1640,9 +1705,10 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(63),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hFB,(HMENU)32,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(62),WS_VISIBLE|WS_CHILD,10,10,150,125,hFB,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"EDIT","",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL,160,10,600,200,hFB,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			for(int i=1;i<=40;i++) if(GetDlgItem(hFB,i)) AllowDarkModeForWindow(GetDlgItem(hFB,i),TRUE);
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
-	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//添加 
+	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//添加
 	}
 	
 	HMENU hMenu=GetSystemMenu(HWND_,FALSE);
