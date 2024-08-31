@@ -43,7 +43,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 					SetWindowText(FindWindowEx(hWnd,NULL,"EDIT",NULL),"DWPT的优点：\n\r1.轻便\r\n\
     DWPT在Windows7及上的版本中除了WinAPI的库和HelpDWPT.dll，不需要其他杂七杂八的库，且DWPT主程序仅有200多KiB，比你用iostream库写一个Hello World编译出来的程序还小，并且不依赖Visual C++运行库\r\n\
 2.界面简洁\r\n\
-    DWPT的用户界面有且仅有1个选项卡控件、1个组合框控件（GroupBox）、1个HotKey控件、4个静态文本控件、1个检查框、4个窗口（Tab Control不会用就用了笨方法）、9个按钮，且没有任何的广告，也不会让你的电脑变慢变卡，不需要时还可以将程序图标隐藏到系统托盘中，十分人性化\r\n\
+    DWPT的用户界面有且仅有1个选项卡控件、1个组合框控件（GroupBox）、1个HotKey控件、5个静态文本控件、2个检查框、5个窗口（Tab Control不会用就用了笨方法）、10个按钮，且没有任何的广告，也不会让你的电脑变慢变卡，不需要时还可以将程序图标隐藏到系统托盘中，十分人性化\r\n\
 \r\n3.更好的支持性\r\n\
     DWPT的视频播放工具是mshta.exe（Microsoft HTML应用程序），不要质疑为什么我要用这个（因为我不会写播放器），而不用ffplay.exe的原因是ffplay.exe确实是太大了，100多MiB，比主程序还要大，并且我选的是32位编译，所以理论上x86的Windows也能用\r\n\
 \r\n所以，如果你要选择一款轻便、简单、无广告的动态壁纸软件，就选DWPT吧！ \
@@ -126,8 +126,8 @@ DWPT项目属性：\r\n\
     项目开始日期：2024/04/21\r\n\
     项目目标：做一个纯净简单的动态壁纸工具\r\n\
     作者为什么要做这个破玩意：只是为了好玩随便写了600多行的代码\r\n\
-    dwp文件结构：\r\n\
-        如果你用记事本打开dwp文件\r\n\
+    dp文件结构：\r\n\
+        如果你用记事本打开dp文件\r\n\
             你会发现第一个字符总是't'或者'f'，这代表了是否启用声音，f=不启用，t=启用\r\n\
             后面的则是视频的绝对路径，文本按理说应该是使用GBK编码存储的，所以支持中文\r\n\
 \r\n\
@@ -227,13 +227,13 @@ DWORD WINAPI FindWindowProcess(LPVOID lparam){
 	SendDlgItemMessage(hWND,1,BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(GetModuleHandle(0),"IDI_SELECTUSING"));
 	ChooseWindow=0;
 	POINT cur;
-	HCURSOR hCursor=LoadCursor(GetModuleHandle(0),"IDC_SELECTCURSOR");
+	//HCURSOR hCursor=LoadCursor(GetModuleHandle(0),"IDC_SELECTCURSOR");
 	HWND Find;
 	RECT rect,DRect;
 	char str[1145];
 	//HBRUSH GBrush=CreateSolidBrush(RGB(0,255,0));
 	while(key_press('S')&&key_press('C')&&(key_press(VK_LCONTROL)||key_press(VK_RCONTROL))){
-        SetCursor(hCursor);
+        //SetCursor(hCursor);
 		GetCursorPos(&cur);
 		Find=WindowFromPoint(cur);
 		if(Find!=ChooseWindow){
