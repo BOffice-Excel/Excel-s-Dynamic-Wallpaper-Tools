@@ -1,3 +1,35 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ * 
+ * Copyright 2024 Office-Excel, 13392621401@189.cn
+ * 
+ * This file is a part of DWPT.
+ * DWPT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * DWPT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with DWPT.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * 这个文件是DWPT的一部分。
+ * 您可以单独使用或分发这个文件，但请不要移除这个头部声明信息.
+ * DWPT是一个自由软件，您可以自由分发、修改其中的源代码或者重新发布它，
+ * 新的任何修改后的重新发布版必须同样在遵守LGPL3或更后续的版本协议下发布.
+ * 关于LGPL协议的细则请参考COPYING、COPYING.LESSER文件，
+ * 您可以在DWPT的相关目录中获得LGPL协议的副本，
+ * 如果没有找到，请连接到 http://www.gnu.org/licenses/ 查看。
+ * 
+ *  - Author: Office-Excel
+ *  - Email Address: 13392621401@189.cn
+ *  - License: GNU Lesser General Public License (LGPL)
+*/
+
 #include <Windows.h>//非常重要！！！ 
 #include <stdio.h>
 #include <io.h>
@@ -61,9 +93,9 @@ char MUIText[][3][260]={//多语言支持功能文本，全在这里了
 	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic Wallpaper配置文件（.dp）\0*.dp\0","Dynamic Wallpaper設定檔（.dp）\0*.dp\0"},
 	{"Do you need to play sound?","是否需要播放声音？","是否需要播放聲音？"},//9
 	{
-		"Programming: Office Excel\nReference video by 偶尔有点小迷糊, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.4\nTranslator: Baidu Translate",
-		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.4\n翻译器：百度翻译",
-		"程式製作：Office-Excel\n參攷視頻 by 偶尔有点小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.4\n翻譯器：百度翻譯"
+		"Programming: Office Excel\nReference video by 偶尔有点小迷糊, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.5\nTranslator: Baidu Translate",
+		"程序制作：Office-Excel\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\n使用工具：Dev-C++，代码语言：C++\n项目开始日期：2024/04/21\n版本：0.0.6.5\n翻译器：百度翻译",
+		"程式製作：Office-Excel\n參攷視頻 by 偶尔有点小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\n使用工具：Dev-C++，程式碼語言：C++\n項目開始日期：2024/04/21\n版本：0.0.6.5\n翻譯器：百度翻譯"
 	},//10
 	{"The configuration file operation is complete. Do you want to start it now?","配置文件操作完成，是否要马上启动？","設定檔操作完成，是否要馬上啟動？"},
 	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","请选择要修改的对象：\n 是->修改视频文件路径\n 否->修改是否有声音\n 取消->什么也不做","請選擇要修改的對象：\n是->修改視頻檔案路徑\n否->修改是否有聲音\n取消->什麼也不做"},
@@ -520,13 +552,13 @@ DWORD WINAPI FindWindowProcess(LPVOID lparam){//查找窗口的线程
 	SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(HInstance,"IDI_SELECTUSING"));
 	ChooseWindow=0;
 	POINT cur;
-	HCURSOR hCursor=LoadCursor(HInstance,"IDC_SELECTCURSOR");
+	//HCURSOR hCursor=LoadCursor(HInstance,"IDC_SELECTCURSOR");
 	HWND Find;
 	RECT rect,DRect;
 	char str[1145];
 	HBRUSH GBrush=CreateSolidBrush(RGB(0,255,0));
 	while(!key_press(VK_LBUTTON)){
-        SetCursor(hCursor);
+        //SetCursor(hCursor);
 		GetCursorPos(&cur);
 		Find=WindowFromPoint(cur);
 		while(GetParent(Find)) Find=GetParent(Find);
@@ -1701,7 +1733,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		else if(i==3){
 			hFB=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			ShowWindow(hFB,SW_HIDE);
-			SendMessage(CreateWindowEx(0,"BUTTON","",BS_ICON|WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL), BM_SETIMAGE, IMAGE_BITMAP,(LPARAM)LoadBitmap(hINstance,"IDB_OPEN"));
+			//SendMessage(CreateWindowEx(0,"BUTTON","",BS_ICON|WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL), BM_SETIMAGE, IMAGE_BITMAP,(LPARAM)LoadBitmap(hINstance,"IDB_OPEN"));
+			SendMessage(CreateWindowEx(0,"BUTTON","...",WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(63),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hFB,(HMENU)32,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(62),WS_VISIBLE|WS_CHILD,10,10,150,125,hFB,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"EDIT","",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL,160,10,600,200,hFB,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);

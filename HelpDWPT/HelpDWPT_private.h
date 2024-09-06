@@ -5,19 +5,19 @@
 #define HELPDWPT_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.0.6.4"
+#define VER_STRING	"0.0.6.5"
 #define VER_MAJOR	0
 #define VER_MINOR	0
 #define VER_RELEASE	6
-#define VER_BUILD	4
-#define COMPANY_NAME	""
-#define FILE_VERSION	"0.0.6.4"
+#define VER_BUILD	5
+#define COMPANY_NAME	"Office-Excel"
+#define FILE_VERSION	"0.0.6.5"
 #define FILE_DESCRIPTION	"Developed using the Dev-C++ IDE"
-#define INTERNAL_NAME	"DWPT∞Ô÷˙ø‚"
-#define LEGAL_COPYRIGHT	"∞Ê»®À˘”– Office-Excel"
+#define INTERNAL_NAME	"DWPT∞Ô÷˙ø‚(DWPT Helper)"
+#define LEGAL_COPYRIGHT	""
 #define LEGAL_TRADEMARKS	""
 #define ORIGINAL_FILENAME	"HelpDWPT.dll"
-#define PRODUCT_NAME	"DWPT∞Ô÷˙ø‚"
-#define PRODUCT_VERSION	"0.0.6.4"
+#define PRODUCT_NAME	"DWPT∞Ô÷˙ø‚(DWPT Helper)"
+#define PRODUCT_VERSION	"0.0.6.5"
 
 #endif /*HELPDWPT_PRIVATE_H*/

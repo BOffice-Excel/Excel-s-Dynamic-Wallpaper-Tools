@@ -7,12 +7,12 @@ WINDRES  = windres.exe
 RES      = HelpDWPT_private.res
 OBJ      = dllmain.o $(RES)
 LINKOBJ  = dllmain.o $(RES)
-LIBS     = -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib32" -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -O2 -s -flto -std=c++14 ../../../AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32/libgdi32.a -m32
+LIBS     = -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib32" -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -O2 -s -flto ../lib32(Used_in_compilation)/libgdi32.a -m32
 INCS     = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = HelpDWPT.dll
-CXXFLAGS = $(CXXINCS) -m32 -lgdi32 -lwinmm -luser32 -lurlmon -DBUILDING_DLL=1
-CFLAGS   = $(INCS) -m32 -lgdi32 -lwinmm -luser32 -lurlmon -DBUILDING_DLL=1
+CXXFLAGS = $(CXXINCS) -m32 -DBUILDING_DLL=1
+CFLAGS   = $(INCS) -m32 -DBUILDING_DLL=1
 RM       = rm.exe -f
 DEF      = libHelpDWPT.def
 STATIC   = libHelpDWPT.a

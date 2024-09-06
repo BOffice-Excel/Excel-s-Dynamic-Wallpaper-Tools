@@ -11,7 +11,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=-DBUILDING_DLL=1_@@_
 CppCompiler=-DBUILDING_DLL=1_@@_
-Linker=../../../AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32/libgdi32.a_@@_
+Linker=../lib32(Used_in_compilation)/libgdi32.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -35,18 +35,18 @@ UnitCount=3
 Major=0
 Minor=0
 Release=6
-Build=4
+Build=5
 LanguageID=2052
 CharsetID=1252
-CompanyName=
-FileVersion=0.0.6.4
+CompanyName=Office-Excel
+FileVersion=0.0.6.5
 FileDescription=Developed using the Dev-C++ IDE
-InternalName=DWPT∞Ô÷˙ø‚
-LegalCopyright=∞Ê»®À˘”– Office-Excel
+InternalName=DWPT∞Ô÷˙ø‚(DWPT Helper)
+LegalCopyright=
 LegalTrademarks=
 OriginalFilename=HelpDWPT.dll
-ProductName=DWPT∞Ô÷˙ø‚
-ProductVersion=0.0.6.4
+ProductName=DWPT∞Ô÷˙ø‚(DWPT Helper)
+ProductVersion=0.0.6.5
 AutoIncBuildNr=0
 SyncProduct=1
 

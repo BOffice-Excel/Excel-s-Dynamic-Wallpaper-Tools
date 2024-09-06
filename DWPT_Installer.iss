@@ -2,11 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.6.4"
+#define MyAppVersion "0.0.6.5"
 #define MyAppPublisher "Office-Excel"
 #define MyAppURL "https://space.bilibili.com/1439352366/"
 #define MyAppExeName "DynamicWallpaperTools.exe"
-#define MyAppAssocName "DWPT±⁄÷Ω≈‰÷√œÓ"
+#define MyAppAssocName "DWPT Wallpaper Profile(DWPT±⁄÷Ω≈‰÷√œÓ)"
 #define MyAppAssocExt ".dp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
@@ -24,11 +24,11 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=C:\Users\ywh11\Desktop\DynamicWallpaper\License.txt
+LicenseFile=.\LICENSE
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=C:\Users\ywh11\Desktop\DynamicWallpaper
+OutputDir=.
 OutputBaseFilename=DWPT_Installer
 Compression=lzma
 SolidCompression=yes
@@ -40,7 +40,7 @@ Name: "armenian"; MessagesFile: "compiler:Languages\Armenian.isl"
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 Name: "bulgarian"; MessagesFile: "compiler:Languages\Bulgarian.isl"
 Name: "catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
-Name: "chinese_simplified"; MessagesFile: "compiler:Languages\Chinese_Simplified.isl"
+Name: "chinese_simplified"; MessagesFile: ".\Chinese_Simplified.isl"
 Name: "corsican"; MessagesFile: "compiler:Languages\Corsican.isl"
 Name: "czech"; MessagesFile: "compiler:Languages\Czech.isl"
 Name: "danish"; MessagesFile: "compiler:Languages\Danish.isl"
@@ -67,9 +67,9 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion      
-Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\HelpDWPT.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\ywh11\Desktop\DynamicWallpaper\Config.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion      
+Source: ".\HelpDWPT.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Config.ini"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
