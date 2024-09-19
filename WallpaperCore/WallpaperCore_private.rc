@@ -3,14 +3,6 @@
 
 #include <windows.h> // include for version info constants
 
-#include "OtherRes.rc"
-
-//
-// SUPPORT FOR WINDOWS XP THEMES:
-// THIS WILL MAKE THE PROGRAM USE THE COMMON CONTROLS
-// LIBRARY VERSION 6.0 (IF IT IS AVAILABLE)
-//
-1 24 "HelpDWPT.dll.Manifest"
 
 //
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
@@ -27,11 +19,11 @@ FILETYPE VFT_DLL
       VALUE "CompanyName", "Office-Excel"
       VALUE "FileVersion", "0.0.7.0"
       VALUE "FileDescription", "Developed using the Dev-C++ IDE"
-      VALUE "InternalName", "DWPT°ïÖú¿â(DWPT Helper)"
+      VALUE "InternalName", "WallpaperCore"
       VALUE "LegalCopyright", ""
       VALUE "LegalTrademarks", ""
-      VALUE "OriginalFilename", "HelpDWPT.dll"
-      VALUE "ProductName", "DWPT°ïÖú¿â(DWPT Helper)"
+      VALUE "OriginalFilename", "WallpaperCore.dll"
+      VALUE "ProductName", "WallpaperCore"
       VALUE "ProductVersion", "0.0.7.0"
     }
   }

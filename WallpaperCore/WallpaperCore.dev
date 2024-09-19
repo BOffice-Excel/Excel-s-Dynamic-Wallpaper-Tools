@@ -1,12 +1,12 @@
 [Project]
-FileName=HelpDWPT.dev
-Name=HelpDWPT
+FileName=WallpaperCore.dev
+Name=WallpaperCore
 Type=3
 Ver=2
 ObjFiles=
 Includes=
 Libs=
-PrivateResource=HelpDWPT_private.rc
+PrivateResource=WallpaperCore_private.rc
 ResourceIncludes=
 MakeIncludes=
 Compiler=-DBUILDING_DLL=1_@@_
@@ -19,17 +19,17 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=HelpDWPT.dll
+OverrideOutputName=WallpaperCore.dll
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
 Folders=
 IncludeVersionInfo=1
-SupportXPThemes=1
+SupportXPThemes=0
 CompilerSet=3
 CompilerSettings=0000000100000000000000000
-UnitCount=3
+UnitCount=2
 
 [VersionInfo]
 Major=0
@@ -41,11 +41,11 @@ CharsetID=1252
 CompanyName=Office-Excel
 FileVersion=0.0.7.0
 FileDescription=Developed using the Dev-C++ IDE
-InternalName=DWPT°ïÖú¿â(DWPT Helper)
+InternalName=WallpaperCore
 LegalCopyright=
 LegalTrademarks=
-OriginalFilename=HelpDWPT.dll
-ProductName=DWPT°ïÖú¿â(DWPT Helper)
+OriginalFilename=WallpaperCore.dll
+ProductName=WallpaperCore
 ProductVersion=0.0.7.0
 AutoIncBuildNr=0
 SyncProduct=1
@@ -66,15 +66,6 @@ CompileCpp=1
 Folder=
 Compile=1
 Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
-FileName=OtherRes.rc
-Folder=Resources
-Compile=1
-Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=

@@ -353,7 +353,8 @@ extern "C" DLLIMPORT void WinWatcher(){
 	wcexWW.hInstance=hinst;
 	wcexWW.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);
 	wcexWW.hCursor=LoadCursor(NULL,IDC_ARROW);
-	wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(wcexWW.hInstance,"IDI_WINWATCHER");
+	//wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(wcexWW.hInstance,"IDI_WINWATCHER");
+	wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(NULL,IDI_APPLICATION);
 	wcexWW.lpszClassName="WinWatcher";
 	wcexWW.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 	wcexWW.lpfnWndProc=WWatcherProc;

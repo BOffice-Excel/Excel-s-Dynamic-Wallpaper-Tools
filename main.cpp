@@ -1,9 +1,6 @@
-#include <Windows.h>//·Ç³£ÖØÒª£¡£¡£¡ 
-#include <stdio.h>
-#include <io.h>
-#include <commctrl.h> 
-#define DLLIMPORT __declspec(dllexport)
+#include "WallpaperCore\dll.h" //WallpaperCore.dllµÄ¿âÎÄ¼ş 
 #include "HelpDWPT\dll.h" //HelpDWPT.dllµÄ¿âÎÄ¼ş 
+#include <commctrl.h> 
 #undef BS_OWNERDRAW
 #define BS_OWNERDRAW 0 
 //#pragma comment (lib,"HelpDWPT\libHelpDWPT.a") 
@@ -35,12 +32,11 @@
 
 HINSTANCE HInstance; //³ÌĞòµÄ¾ä±ú£¬Ê¹ÓÃGetModuleHandleº¯Êı¼´¿É»ñµÃ 
 WNDCLASSEX wc; //´°¿ÚÀà£¬´´½¨´°¿ÚÊ±ĞèÒª×¢²áÒ»¸öÀà²Å¿ÉÒÔ´´½¨´°¿Ú£¬·ñÔò±¨´í 
-char RETURN[1145],*programName,Path[1145],*NameOfPro,CmdLine[1145],ConfigFile[MAX_PATH+1];//Ò»¶ÑµÄ×Ö·û´®£¬´ó¶à¶¼ÊÇÁÙÊ±µÄ¡¢ÔÚStartDwpº¯ÊıÖĞÊ¹ÓÃ 
+char RETURN[1145],*programName,*NameOfPro,CmdLine[1145],ConfigFile[MAX_PATH+1];//Ò»¶ÑµÄ×Ö·û´®£¬´ó¶à¶¼ÊÇÁÙÊ±µÄ¡¢ÔÚStartDwpº¯ÊıÖĞÊ¹ÓÃ 
 DWORD dw/*´ò¿ªÎÄ¼şÊ±µÄ±ê¼Ç*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*¼Ç×¡ËùÓĞ°´Å¥×´Ì¬*/;
 HANDLE hFile;//ÎÄ¼ş¾ä±ú 
 HDC hdc=GetDC(0);//»ñÈ¡×ÀÃæµÄHDC£¨ÓÃÀ´¸ã´°¿ÚÑ¡ÔñÆ÷£© 
-int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒıÓÃ°´Å¥ÊÂ¼şID±ê¼Ç*/,LangID=IL_UNSET/*ÓïÑÔID*/;
-bool quietMode=false;//ÊÇ·ñÆôÓÃ°²¾²Ä£Ê½£¨ÔÚÆô¶¯dpÎÄ¼şÖĞ£© 
+int W /*×ÀÃæ¿í¶È*/,H /*×ÀÃæ¸ß¶È*/,BtnWparam[5]={1,2,3,5,6}/*ÒıÓÃ°´Å¥ÊÂ¼şID±ê¼Ç*/;
 HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow,hFB;//hWnd=ÍĞÅÌÍ¼±ê´°¿Ú¾ä±ú£¬HWND_=Ö÷´°¿Ú¾ä±ú 
 NOTIFYICONDATA nid;//ÍĞÅÌÍ¼±êÊı¾İ 
 HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu(),LangMenu=CreatePopupMenu();//ÎÄ¼ş²Ëµ¥£¬È«¾ÖÊÇÒòÎªÍĞÅÌÓÒ¼üÒªÓÃÕâ¸ö 
@@ -49,91 +45,7 @@ typedef BOOL WINAPI (*SPDA)(VOID);
 SPDA SetProcessDPIAwarev;//ÉèÖÃ¸Ã½ø³ÌµÄDPI£¬²»Éè»áºÜ³óÇÒ±ÈÀı²»Ì«¶Ô 
 HFONT hFont = CreateFont(25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("Ë¼Ô´"));//Ä¬ÈÏ×ÖÌå 
 //char BtnName[5][30]={"ĞÂ½¨ÅäÖÃÎÄ¼ş","±à¼­ÅäÖÃÎÄ¼ş","Ó¦ÓÃÅäÖÃÎÄ¼ş","Í£Ö¹¶¯Ì¬±ÚÖ½","¹ØÓÚDynamic Wallpaper Tools"};//°´Å¥ÎÄ±¾ 
-char MUIText[][3][260]={//¶àÓïÑÔÖ§³Ö¹¦ÄÜÎÄ±¾£¬È«ÔÚÕâÀïÁË 
-	{"Create profile","ĞÂ½¨ÅäÖÃÎÄ¼ş","ĞÂ½¨ÔO¶¨™n"},//0
-	{"Edit profile","±à¼­ÅäÖÃÎÄ¼ş","¾İ‹ÔO¶¨™n"},
-	{"Apply profile","Ó¦ÓÃÅäÖÃÎÄ¼ş","‘ªÓÃÔO¶¨™n"},
-	{"Stop Wallpaper","Í£Ö¹¶¯Ì¬±ÚÖ½","Í£Ö¹„Ó‘B×ÀÃæ"},
-	{"About Dynamic Wallpaper Tools","¹ØÓÚDynamic Wallpaper Tools","êPì¶Dynamic Wallpaper Tools"},
-	{"Unable to open the video display program \"mshta.exe\" (playing videos using a browser), please check if the program exists in the system directory","ÎŞ·¨´ò¿ªÊÓÆµÏÔÊ¾³ÌĞò\"mshta.exe\"£¨Ê¹ÓÃä¯ÀÀÆ÷²¥·ÅÊÓÆµ£©£¬Çë¼ì²éÏµÍ³Ä¿Â¼ÏÂ³ÌĞòÊÇ·ñ´æÔÚ","Ÿo·¨´òé_Ò•îlï@Ê¾³ÌÊ½\"mshta.exe\"£¨Ê¹ÓÃgÓ[Æ÷²¥·ÅÒ•îl£©£¬Õˆ™z²éÏµ½yÄ¿ä›ÏÂ³ÌÊ½ÊÇ·ñ´æÔÚ"},
-	{"Warning! This operation will close all windows under the class name \"Progman\"!","¾¯¸æ£¡´Ë²Ù×÷»á¹Ø±ÕËùÓĞÔÚÀàÃûÎª¡°Progman¡±µÄ´°¿ÚÏÂµÄËùÓĞ´°¿Ú£¡","¾¯¸æ£¡ ´Ë²Ù×÷•şêPé]ËùÓĞÔÚîÃûé¡°Progman¡±µÄÒ•´°ÏÂµÄËùÓĞÒ•´°"},
-	{"Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0","ÊÓÆµÎÄ¼ş£¨*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv£©\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0ËùÓĞÎÄ¼ş£¨*.*£©\0*.*\0","Ò•îl™n°¸£¨*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv£©\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0ËùÓĞ™n°¸£¨*.*£©\0*.*\0"},
-	{"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0","Dynamic WallpaperÅäÖÃÎÄ¼ş£¨.dp£©\0*.dp\0","Dynamic WallpaperÔO¶¨™n£¨.dp£©\0*.dp\0"},
-	{"Do you need to play sound?","ÊÇ·ñĞèÒª²¥·ÅÉùÒô£¿","ÊÇ·ñĞèÒª²¥·ÅÂ•Òô£¿"},//9
-	{
-		"Programming: Office Excel\nReference video by Å¼¶ûÓĞµãĞ¡ÃÔºı, video id: BV1HZ4y1978a (press to cancel to view original video)\nTools used: Dev-C++, Code language: C++\nProject start date: April 21, 2024\nVersion: 0.0.6.5\nTranslator: Baidu Translate",
-		"³ÌĞòÖÆ×÷£ºOffice-Excel\n²Î¿¼ÊÓÆµ by Å¼¶ûÓĞµãĞ¡ÃÔºı£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.6.5\n·­ÒëÆ÷£º°Ù¶È·­Òë",
-		"³ÌÊ½Ñu×÷£ºOffice-Excel\n…¢”Ò•îl by Å¼¶ûÓĞµãĞ¡ÃÔºı£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\n°æ±¾£º0.0.6.5\n·­×gÆ÷£º°Ù¶È·­×g"
-	},//10
-	{"The configuration file operation is complete. Do you want to start it now?","ÅäÖÃÎÄ¼ş²Ù×÷Íê³É£¬ÊÇ·ñÒªÂíÉÏÆô¶¯£¿","ÔO¶¨™n²Ù×÷Íê³É£¬ÊÇ·ñÒªñRÉÏ†¢„Ó£¿"},
-	{"Please select the object you want to modify:\nYes -> Modify video file path\nNo -> Modify whether there is sound\nCancel -> Do nothing","ÇëÑ¡ÔñÒªĞŞ¸ÄµÄ¶ÔÏó£º\n ÊÇ->ĞŞ¸ÄÊÓÆµÎÄ¼şÂ·¾¶\n ·ñ->ĞŞ¸ÄÊÇ·ñÓĞÉùÒô\n È¡Ïû->Ê²Ã´Ò²²»×ö","Õˆßx“ñÒªĞŞ¸ÄµÄŒ¦Ïó£º\nÊÇ->ĞŞ¸ÄÒ•îl™n°¸Â·½\n·ñ->ĞŞ¸ÄÊÇ·ñÓĞÂ•Òô\nÈ¡Ïû->Ê²üNÒ²²»×ö"},
-	{"Wallplaper Config","±ÚÖ½ÅäÖÃ","×ÀÃæÅäŒ…"},
-	{"Global settings","È«¾ÖÉèÖÃ","È«ÓòÔO¶¨"},
-	{"Self start upon startup","¿ª»ú×ÔÆô¶¯","é_™C×Ô†¢„Ó"},//15
-	{"Current default item:","µ±Ç°Ä¬ÈÏÏî£º","®”Ç°Ä¬ÕJí—£º"},
-	{"Edit","±à¼­","¾İ‹"},
-	{"Registry modification failed!","×¢²á±íĞŞ¸ÄÊ§°Ü£¡","Ô]ƒÔ±íĞŞ¸ÄÊ§”¡£¡"},//18
-	{"Do you want to restart explorer.exe? This may result in a black screen for a while. If Win11 users set a right angle, it will turn back into a rounded corner. Please make a careful decision!","ÊÇ·ñĞèÒªÖØÆôexplorer.exe£¿Õâ¿ÉÄÜ»áºÚÆÁÒ»»á¶ù£¬Win11ÓÃ»§Èç¹ûÉèÖÃÁËÖ±½Ç»á±ä»ØÔ²½Ç£¬ÇëÉ÷ÖØ¾ö¶¨£¡","ÊÇ·ñĞèÒªÖØ†™explorer.exe£¿ ß@¿ÉÄÜ•şºÚÆÁÒ»•şƒº£¬Win11ÓÃ‘ôÈç¹ûÔO¶¨ÁËÖ±½Ç•ş×ƒ»ØˆA½Ç£¬ÕˆÉ÷ÖØ¾ö¶¨£¡"},
-	{"Quit(&Q)","ÍË³ö£¨&Q£©","ÍË³ö£¨&Q£©"},//20
-	{"Registry modification completed!","×¢²á±íĞŞ¸ÄÍê³É£¡","Ô]ƒÔ±íĞŞ¸ÄÍê³É£¡"},
-	{"Do you need to set this configuration item as the default (including startup default)£º","ÊÇ·ñĞèÒª½«Õâ¸öÅäÖÃÏîÉèÖÃÎªÄ¬ÈÏÏî£¨°üÀ¨Æô¶¯Ä¬ÈÏÏî£©£º","ÊÇ·ñĞèÒªŒ¢ß@‚€ÅäŒ…í—ÔO¶¨éÄ¬ÕJí—£¨°üÀ¨†¢„ÓÄ¬ÕJí—£©£º"},
-	{"explorer.exe has been restarted and completed, you can continue your work now!","explorer.exeÒÑÖØÆôÍê³É£¬Äú¿ÉÒÔ¼ÌĞøÄúµÄ¹¤×÷ÁË£¡","explorer.exeÒÑÖØ†™Íê³É£¬Äú¿ÉÒÔÀ^ÀmÄúµÄ¹¤×÷ÁË£¡"},
-	{"Apply","Ó¦ÓÃ","‘ªÓÃ"},
-	{"Set as default configuration","ÉèÖÃÎªÄ¬ÈÏÅäÖÃ","ÔO¶¨éÄ¬ÕJÅäŒ…"},
-	{"Help(&H)","°ïÖú£¨&H£©","ÍÖú£¨&H£©"},
-	{"Operation(&O)","²Ù×÷£¨&O£©","²Ù×÷£¨&O£©"},//27
-	{"About(&A)","¹ØÓÚ£¨&A£©","êPì¶£¨&A£©"},
-	{"End dynamic wallpaper(&E)","½áÊø¶¯Ì¬±ÚÖ½£¨&E£©","½YÊø„Ó‘B×ÀÃæ£¨&E£©"},
-	{"Open and...(&C)","´ò¿ª²¢...£¨&C£©","´òé_K...£¨&C£©"},//30
-	{"Open the default item and...(&D)","´ò¿ªÄ¬ÈÏÏî²¢...£¨&D£©","´òé_Ä¬ÕJí—K...£¨&D£©"},
-	{"The program has already started, please do not execute it again!","³ÌĞòÒÑ¾­Æô¶¯ÁË£¬Çë²»ÒªÔÙ´ÎÖ´ĞĞ£¡","³ÌÊ½ÒÑ½›†¢„ÓÁË£¬Õˆ²»ÒªÔÙ´ÎˆÌĞĞ£¡"},
-	{"The original value was: ","Ô­À´µÄÖµÎª£º","Ô­íµÄÖµé£º"},
-	{"\nDo you want to modify it?","\nÊÇ·ñÒªĞŞ¸Ä£¿","\nÊÇ·ñÒªĞŞ¸Ä£¿"},
-	{"Please select: ","ÇëÑ¡Ôñ£º","Õˆßx“ñ£º"},//35
-	{"The video path has been modified!","ÊÓÆµÂ·¾¶ÒÑĞŞ¸ÄÍê³É£¡","Ò•îlÂ·½ÒÑĞŞ¸ÄÍê³É£¡"},//36
-	{"The modification of the video path has been canceled...","ÒÑÈ¡ÏûĞŞ¸ÄÊÓÆµÂ·¾¶¡£¡£¡£","ÒÑÈ¡ÏûĞŞ¸ÄÒ•îlÂ·½¡£¡£¡£"},
-	{"The original value for playing sound when using dynamic wallpapers is:","Ô­À´ÊÇ·ñÔÚÊ¹ÓÃ¶¯Ì¬±ÚÖ½Ê±²¥·ÅÉùÒôµÄÖµÎª£º","Ô­íÊÇ·ñÔÚÊ¹ÓÃ„Ó‘B×ÀÃæ•r²¥·ÅÂ•ÒôµÄÖµé£º"},
-	{"Yes","ÊÇ","·ñ"},
-	{"No","·ñ","·ñ"},//40
-	{"\nPlease select: ","\nÇëÑ¡Ôñ£º","\nÕˆßx“ñ£º"},
-	{"Do you want to save this modification?","ÊÇ·ñÒª±£´æÕâ´ÎµÄĞŞ¸Ä£¿","ÊÇ·ñÒª±£´æß@´ÎµÄĞŞ¸Ä£¿"},
-	{"Do you want to apply it now?","ÊÇ·ñÒªÁ¢¼´Ó¦ÓÃ£º ","ÊÇ·ñÒªÁ¢¼´‘ªÓÃ£¿"},
-	{"Shrink to system tray","ËõĞ¡µ½ÏµÍ³ÍĞÅÌ","¿sĞ¡µ½Ïµ½yÓš±P"},
-	{"How to use it?","ÈçºÎÊ¹ÓÃ£¿","ÈçºÎÊ¹ÓÃ£¿"},//45
-	{"Advanced Options","¸ß¼¶Ñ¡Ïî","¸ß¼‰ßxí—"},
-	{"Set","ÉèÖÃ","ÔOÖÃ"},
-	{"Set any window as wallpaper (Unsafe)","½«ÈÎÒâ´°¿ÚÉèÖÃÎª±ÚÖ½£¨²»°²È«£©","Œ¢ÈÎÒâÒ•´°ÔO¶¨é×ÀÃæ£¨²»°²È«£©"},
-	{"Title of Window: ","´°¿Ú±êÌâ£º","Ò•´°˜Ëî}£º"},
-	{"Class Name of Window: ","´°¿ÚÀàÃû£º","Ò•´°îÃû£º"},//50
-	{"Boss key:","ÀÏ°å¼ü£º","ÀÏé›æI£º"},
-	{"Histroy","ÀúÊ·","švÊ·"},
-	{"Tools (&T)","¹¤¾ß£¨&T£©","¹¤¾ß£¨&T£©"},
-	{"Open the WinWatcher tool","´ò¿ªWinWatcher¹¤¾ß","´òé_WinWatcher¹¤¾ß"},//54
-	{"The path is invalid \\ The file does not exist, unable to start the dp configuration file","Â·¾¶²»ºÏ·¨\\ÎÄ¼ş²»´æÔÚ£¬ÎŞ·¨Æô¶¯dpÅäÖÃÎÄ¼ş","Â·½²»ºÏ·¨\\™n°¸²»´æÔÚ£¬Ÿo·¨†¢„ÓdpÔO¶¨™n"},
-	{"Generate GUID","Éú³É GUID","Éú³É GUID"},
-	{"Generate UUID","Éú³É UUID","Éú³É UUID"},//ÒÑ·Ï³ı//57
-	{"Fast Boot","¿ìËÙÆô¶¯","¿ìËÙ†¢„Ó"},//58
-	{"Error: The target video does not exist","´íÎó£ºÄ¿±êÊÓÆµ²»´æÔÚ","åeÕ`£ºÄ¿˜ËÒ•îl²»´æÔÚ"},//59
-	{"Mute and start","¾²Òô²¢Æô¶¯","ìoÒôK†¢„Ó"},
-	{"Do not mute and start","²»¾²Òô²¢Æô¶¯","²»ìoÒôK†¢„Ó"},//61
-	{"Video Path: \r\n\r\nSupports: \r\nLocal Video","ÊÓÆµÂ·¾¶£º\r\n\r\nÖ§³ÖÏî£º\r\n±¾µØÊÓÆµ","Ò•îlÂ·½£º\r\n\r\nÖ§³Öí—£º\r\n±¾µØÒ•îl"},//62
-	{"Launch","Æô¶¯","†¢„Ó"},//63
-	{"Save a configuration file to save wallpaper settings.","±£´æÒ»¸öÅäÖÃÎÄ¼şÒÔ±£´æ±ÚÖ½ÉèÖÃ¡£","±£´æÒ»‚€ÔO¶¨™nÒÔ±£´æ×ÀÃæÔO¶¨¡£"},//64
-	{"Modify a configuration file to change wallpaper settings.","ĞŞ¸ÄÒ»¸öÅäÖÃÎÄ¼şÒÔ¸ü¸Ä±ÚÖ½ÉèÖÃ¡£","ĞŞ¸ÄÒ»‚€ÔO¶¨™nÒÔ¸ü¸Ä×ÀÃæÔO¶¨¡£"},//65
-	{"Open a configuration file to start dynamic wallpaper.","´ò¿ªÒ»¸öÅäÖÃÎÄ¼şÒÔÆô¶¯¶¯Ì¬±ÚÖ½¡£","´òé_Ò»‚€ÔO¶¨™nÒÔ†¢„Ó„Ó‘B×ÀÃæ¡£"},
-	{"Close all windows created by mshta.exe to stop dynamic wallpapers.","¹Ø±ÕËùÓĞmshta.exe´´½¨µÄ´°¿ÚÒÔÍ£Ö¹¶¯Ì¬±ÚÖ½¡£","êPé]ËùÓĞmshta.exe„“½¨µÄÒ•´°ÒÔÍ£Ö¹„Ó‘B×ÀÃæ¡£"},
-	{"Open 'About'","´ò¿ª¡°¹ØÓÚ¡±","´òé_¡°êPì¶¡±"},//68
-	{"Set Default Font","ÉèÖÃÄ¬ÈÏ×ÖÌå","ÔO¶¨îAÔO×Öów"},//69
-	{"Font setting completed, font name: ","×ÖÌåÒÑÉèÖÃÍê³É£¬×ÖÌåÃû³Æ£º","×ÖówÒÑÔO¶¨Íê³É£¬×ÖówÃû·Q£º"},//70
-	{". After restarting the program, the font will take effect!","£¬ÖØĞÂÆô¶¯³ÌĞòºó×ÖÌå½«ÉúĞ§£¡","£¬ÖØĞÂ†¢„Ó³ÌÊ½áá×ÖówŒ¢ÉúĞ§£¡"},//71
-	{"Please select a font to continue initialization. If you want to try again, please restart this program.","ÇëÑ¡ÔñÒ»¸ö×ÖÌåÒÔ¼ÌĞø³õÊ¼»¯£¬Èç¹ûÄúÒªÖØÊÔ£¬ÇëÖØĞÂÆô¶¯±¾³ÌĞò¡£","Õˆßx“ñÒ»‚€×ÖówÒÔÀ^Àm³õÊ¼»¯£¬Èç¹ûÄúÒªÖØÔ‡£¬ÕˆÖØĞÂ†¢„Ó±¾³ÌÊ½¡£"},//72
-	{"Language","ÓïÑÔ","ÕZÑÔ"},//73
-	{"English","Ó¢Óï","Ó¢ÕZ"},//74
-	{"Chinese Simplified","¼òÌåÖĞÎÄ","º†ówÖĞÎÄ"},//75
-	{"Chinese Traditional","·±ÌåÖĞÎÄ","·±ówÖĞÎÄ"},//76
-	{"The language has been updated and will take effect after restarting the program!","ÓïÑÔÒÑ¸üĞÂ£¬ÖØÆô³ÌĞòºó½«ÉúĞ§£¡","ÕZÑÔÒÑ¸üĞÂ£¬ÖØ†™³ÌÊ½ááŒ¢ÉúĞ§£¡"},//77
-	{"The program has been started. Please don't run again!","³ÌĞòÒÑÆô¶¯Íê³É£¬Çë²»Òª¶ş´ÎÔËĞĞ£¡","³ÌÊ½ÒÑ†¢„ÓÍê³É£¬Õˆ²»Òª¶ş´Î†¢„Ó£¡"},//78
-};
+
 /*
 wchar_t NoteText[][3][250]={{L"\x53\x61\x76\x65\x20\x61\x20\x63\x6F\x6E\x66\x69\x67\x75\x72\x61\x74\x69\x6F\x6E\x20\x66\x69\x6C\x65\x20\x74\x6F\x20\x73\x61\x76\x65\x20\x77\x61\x6C\x6C\x70\x61\x70\x65\x72\x20\x73\x65\x74\x74\x69\x6E\x67\x73\x2E",
 L"\xE4\xBF\x9D\xE5\xAD\x98\xE4\xB8\x80\xE4\xB8\xAA\xE9\x85\x8D\xE7\xBD\xAE\xE6\x96\x87\xE4\xBB\xB6\xE4\xBB\xA5\xE4\xBF\x9D\xE5\xAD\x98\xE5\xA3\x81\xE7\xBA\xB8\xE8\xAE\xBE\xE7\xBD\xAE\xE3\x80\x82",
@@ -163,16 +75,6 @@ char* StringCat(char *Str1,const char *Str2){//Ã»ÓÃµÄ¶«Î÷
 	return a;
 }
 
-char* GetString4ThisLang(UINT index){
-	if(LangID==IL_UNSET){
-		switch(PRIMARYLANGID(GetUserDefaultLangID())){//»ñÈ¡ÓïÑÔID²¢ÉèÖÃµ±Ç°ÓïÑÔ 
-			case LANG_CHINESE_SIMPLIFIED:LangID=IL_Simplified_Chinese;break;
-			case LANG_CHINESE_TRADITIONAL:LangID=IL_Traditional_Chinese;break;
-			default:LangID=IL_ENGLISH;break;
-		}
-	}
-	return MUIText[index][LangID];
-}
 LONG GetRegValue(HKEY key,const char path[],const char keyname[],char value[]){//»ñÈ¡×¢²á±íµÄÄ³¸öÖµ £¨ÎŞĞè¹ÜÀíÔ±£© 
     HKEY hKey;
     BYTE byData[255];
@@ -245,18 +147,6 @@ LONG DelRegValue(HKEY key,const char path[],const char keyname[]){//É¾³ı×¢²á±íÖĞ
     return result;
 }
 
-BOOL CALLBACK EnumWindowProc(_In_ HWND hwnd, _In_ LPARAM Lparam)//ºËĞÄ£¡£¡£¡¶¯Ì¬±ÚÖ½µÄÇ¶Èë´°¿Ú¹ı³Ì 
-{
-    HWND hDefView = FindWindowEx(hwnd, 0, "SHELLDLL_DefView", 0);
-    if (hDefView != 0) {
-        HWND hWorkerw = FindWindowEx(0, hwnd, "WorkerW", 0);
-        HWND SCREEN = FindWindowEx(hWorkerw,0,"SysListView32",0);
-        ShowWindow(hWorkerw, SW_HIDE);
-        return FALSE;
-    }
-    return TRUE;
-}
-
 int GetNumberLength(int num){//»ñÈ¡Êı×Ö³¤¶È£¨ÓĞ¶àÉÙÎ»£© 
 	int cnt=0;
 	while(num){
@@ -265,6 +155,7 @@ int GetNumberLength(int num){//»ñÈ¡Êı×Ö³¤¶È£¨ÓĞ¶àÉÙÎ»£©
 	}
 	return cnt;
 }
+
 char* NumToString(int n){//½«Êı×Ö×ª»»ÎªÎÄ±¾£¨·µ»ØÖµÔÚRETURNÊı×éÖĞ£© 
 	memset(RETURN,0,sizeof RETURN);
 	if(n==0){
@@ -350,14 +241,6 @@ bool SaveFileDlg(HWND ParentWindow, LPCSTR FileType, char Output_Path[],const ch
 	return true;//³É¹¦£¡ 
 }
 
-BOOL CALLBACK StopDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam){//Í£Ö¹¶¯Ì¬±ÚÖ½µÄ»Øµ÷º¯Êı£¨Enum±éÀú£© 
-	char Text[1145];
-	GetClassName(hWnd,Text,sizeof(Text));
-	//GetWindowText(hWnd,Text,GetWindowTextLength(hWnd)+1);
-	if(strcmp(Text,"HTML Application Host Window Class")==0) PostMessage(hWnd,WM_CLOSE,NULL,NULL);
-	return FALSE;
-}
-
 /*BOOL CALLBACK OutDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam){
 	char Text[1145];
 	GetClassName(hWnd,Text,sizeof(Text));
@@ -365,79 +248,6 @@ BOOL CALLBACK StopDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam){//Í£Ö¹¶¯Ì¬±ÚÖ½µÄ»Øµ
 	if(strcmp(Text,"SHELLDLL_DefView")!=0) PostMessage(hWnd,WM_CLOSE,NULL,NULL);
 	return TRUE;
 }*/
-
-void PutToDesktop(HWND Wallpaper){//½«Wallpaper´°¿Ú·Å½ø×ÀÃæÀï 
-	if(!Wallpaper){//...
-		MessageBox(Wallpaper,"½«×ÀÃæ·Å½ø×ÀÃæÀï£¿ÄãÔÚÕâÌ×ÍŞÄØ","Error",MB_ICONINFORMATION|MB_OK);
-		return ;
-	}
-	int width=GetDeviceCaps(GetDC(0), DESKTOPHORZRES),height=GetDeviceCaps(GetDC(0), DESKTOPVERTRES);//»ñÈ¡ÆÁÄ»Éè±¸·Ö±æÂÊ 
-	HWND hProgman = FindWindow("Progman", 0), hFfplay = Wallpaper;
-	SendMessageTimeout(hProgman, 0x52C, 0, 0, 0, 100, 0);//ÑÓÊ±·¢ËÍÏûÏ¢ 
-	SetWindowPos(hFfplay, NULL, 0, 0, width, height, SWP_NOZORDER);//ÉèÖÃ´°¿Ú´óĞ¡ºÍÎ»ÖÃ 
-	SetParent(hFfplay, hProgman);//ÉèÖÃ¸¸´°¿Ú 
-	EnumWindows(EnumWindowProc, 0);//½«Õâ¸ö´°¿Ú·Åµ½×ÀÃæµÄºó±ß 
-    //Shell_NotifyIcon(NIM_SETVERSION, &nid);//Toast Message Box
-	return ;
-}
-
-DWORD WINAPI DwpThread(LPVOID lparam){//ºËĞÄÏß³Ì 
-	if((!quietMode)&&MessageBox(NULL,GetString4ThisLang(6),"Warning",MB_YESNO|MB_ICONWARNING)!=6) return 0; //¾¯¸æ 
-	char cmd[1145]=" \"",sound,VP[1145],TmpPath[MAX_PATH+20],str1[MAX_PATH*4];//³õÊ¼»¯Ò»¶ÑÎÄ±¾ 
-	STARTUPINFO si = {0};
-	PROCESS_INFORMATION pi = {0};//ÉèÖÃÆô¶¯½ø³ÌµÄ½á¹¹Ìå 
-	HWND PROGMAN=FindWindow("Progman", 0);
-	if(PROGMAN) EnumChildWindows(PROGMAN,StopDWPProc,NULL);
-	
-	/*SHELLEXECUTEINFO sei = {0};
-    sei.cbSize = sizeof(SHELLEXECUTEINFO);
-    sei.fMask = SEE_MASK_NOCLOSEPROCESS;
-    sei.lpFile = "taskkill.exe";
-    sei.nShow = SW_HIDE;
-    sei.lpParameters = "/F /IM mshta.exe";
-    if (ShellExecuteEx(&sei)) CloseHandle(sei.hProcess);//Æô¶¯²¢½áÊømshta.exe */
-    
-	strcpy(str1,"<html>\
-<META http-equiv=\"content-type\" content=\"text/html; charset=GBK\">\
-<meta http-equiv=\"x-ua-compatible\" content=\"IE=9\"/>\
-<head><title>VideoPlayer</title><HTA:APPLICATION APPLICATIONNAME=\"VideoPlayer\"ID=\"VideoPlayer\" BORDER=\"none\" SHOWINTASKBAR=\"no\" VERSION=\"0.0\"/></head>\
-<body><video style=\"width:100%;height:100%;left:0px;top:0px;position:fixed\" autoplay loop");//ÉèÖÃÎÄ±¾ 
-	Sleep(500);
-	
-	dw=0;
-	hFile=CreateFile(Path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);//´ò¿ªÎÄ¼ş¾ä±ú 
-	ReadFile(hFile,&sound,1,&dw,NULL);
-	ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);
-	for(int i=strlen(VP);!(VP[i]<='Z'&&VP[i]>='A'||VP[i]<='z'&&VP[i]>='a'||VP[i]<='9'&&VP[i]>='0');i--) VP[i]=NULL;//¶ÁÈëÎÄ¼şµÄÊı¾İ 
-	
-	//Ê¹ÓÃmshta.exe²¥·Å
-	GetTempPath(MAX_PATH,TmpPath);//»ñÈ¡ÁÙÊ±Ä¿Â¼²¢´´½¨Temporary.htaÁÙÊ±ÎÄ¼ş 
-	strcat(TmpPath,"Temporary.hta");
-	if(TmpPath[strlen(TmpPath)-1]=='\r') TmpPath[strlen(TmpPath)-1]=NULL;
-	freopen(TmpPath,"w",stdout);
-	while(_access(VP,0)==-1) VP[strlen(VP)-1]=NULL;
-	printf("%s%s><source src=\"%s",str1,(sound=='t'?"":" muted"),VP);
-	strcpy(str1,"\" type=\"video/mp4\">ERROR</video></body></html>");
-	printf("%s",str1);
-	fclose(stdout);//ÍË³öĞ´Èë 
-	
-	memset(&si,NULL,sizeof si);
-	memset(&pi,NULL,sizeof pi);
-    strcat(cmd,TmpPath);
-    strcat(cmd,"\"");
-    GetSystemDirectory(str1,MAX_PATH);//»ñÈ¡ÏµÍ³µÄÄ¿Â¼£¨System32£© 
-    strcat(str1,"\\mshta.exe");
-	if(!CreateProcess(str1,cmd,NULL,NULL,NULL,NULL,NULL,NULL,&si,&pi)){//Æô¶¯½ø³Ì 
-		if(!quietMode) MessageBox(NULL,GetString4ThisLang(5),NULL,MB_ICONERROR);
-		if(quietMode) ExitProcess(0);
-		else return 0;
-	}
-	
-	while(FindWindow("HTML Application Host Window Class", 0)==NULL) Sleep(500);//ÕÒmshtaµÄ´°¿Ú 
-	PutToDesktop(FindWindow("HTML Application Host Window Class", 0));
-	return 0;
-}
-
 int SetDefFont(LOGFONTA *lpLogFont){
 	CHOOSEFONTA cf;
 	LOGFONTA lf;
@@ -570,11 +380,6 @@ DWORD WINAPI FindWindowProcess(LPVOID lparam){//²éÕÒ´°¿ÚµÄÏß³Ì
 	//RedrawWindow(0,NULL,NULL,RDW_ERASE);
 	return 0; 
 } 
-void StartDwp(const char PathA[],bool Quiet){//´´½¨Æô¶¯Dwp½ø³Ì 
-	quietMode=Quiet;
-	strcpy(Path,PathA);
-	CreateThread(NULL,NULL,DwpThread,NULL,NULL,NULL);
-}
 /*
 LRESULT CALLBACK DlgProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam){
 	static HWND static1=FindWindowEx(hwnd,0,"STATIC",0);
@@ -681,8 +486,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		}
 		
 		case WM_CREATE:{
-			SetTimer(hwnd,1,100,NULL);
-			HMODULE hModule=GetModuleHandle("dwmapi.dll");
+			//SetTimer(hwnd,1,100,NULL);
+			HMODULE hModule=LoadLibrary("dwmapi.dll");
 			if(hModule){
 				bool Dark=true;
 				typedef VOID (*DSWA)(HWND,DWORD,LPCVOID,DWORD);
@@ -1383,8 +1188,8 @@ int main(int argc,char *argv[]) {//mainº¯Êı
 	if(argc==2){
 		if(strcmp(argv[1],"-q")==0){
 			GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",RETURN);
-			quietMode=true;
-			strcpy(Path,RETURN);
+			SGetQuietMode(true,true);
+			SGetVidPath(true,RETURN);
 			DwpThread(NULL);
 			hasCmd=true;
 		}
@@ -1394,8 +1199,8 @@ int main(int argc,char *argv[]) {//mainº¯Êı
 		if(strcmp(argv[1],"-o")==0){
 			if(argv[2][0]=='"') argv[2]++;
 			if(argv[2][strlen(argv[2])-1]=='"') argv[2][strlen(argv[2])-1]=NULL;
-			quietMode=true;
-			strcpy(Path,argv[2]);
+			SGetQuietMode(true,true);
+			SGetVidPath(true,argv[2]);
 			DwpThread(NULL);
 			hasCmd=true;
 		}
@@ -1420,8 +1225,8 @@ int main(int argc,char *argv[]) {//mainº¯Êı
 				freopen(tPath,"w",stdout);
 				printf("%c%s",(strcmp(argv[2],"true")==0?'t':'f'),argv[3]);
 				fclose(stdout);
-				quietMode=true;
-				strcpy(Path,tPath);
+				SGetQuietMode(true,true);
+				SGetVidPath(true,tPath);
 				DwpThread(NULL);
 				return 0;
 			}
@@ -1435,7 +1240,7 @@ int main(int argc,char *argv[]) {//mainº¯Êı
 		else break;
 	}
 	sprintf(ConfigFile,"%s\\Config.ini",programName);
-	LangID=GetPrivateProfileInt("Main","Lang",-1,ConfigFile);
+	SGetLangId(true,GetPrivateProfileInt("Main","Lang",-1,ConfigFile));
 	if(GetPrivateProfileInt("Main","FirstSetup",false,ConfigFile)==false){
 		LOGFONT lf;
 		if(SetDefFont(&lf)!=TRUE){
@@ -1605,9 +1410,9 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	AppendMenu(FuncMenu,MF_STRING|((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==true)?MF_ENABLED:MF_DISABLED),27,GetString4ThisLang(56));//Éú³É GUID \ UUID
 	AppendMenu(FuncMenu,MF_STRING,34,GetString4ThisLang(69));//ÉèÖÃÄ¬ÈÏ×ÖÌå
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)FuncMenu,GetString4ThisLang(53));//¹¦ÄÜ
-	AppendMenu(LangMenu,MF_STRING|((LangID==0)?MF_CHECKED:MF_UNCHECKED),36,GetString4ThisLang(74));//Ó¢Óï 
-	AppendMenu(LangMenu,MF_STRING|((LangID==1)?MF_CHECKED:MF_UNCHECKED),37,GetString4ThisLang(75));//¼òÌåÖĞÎÄ 
-	AppendMenu(LangMenu,MF_STRING|((LangID==2)?MF_CHECKED:MF_UNCHECKED),38,GetString4ThisLang(76));//·±ÌåÖĞÎÄ 
+	AppendMenu(LangMenu,MF_STRING|((SGetLangId(false,false)==0)?MF_CHECKED:MF_UNCHECKED),36,GetString4ThisLang(74));//Ó¢Óï 
+	AppendMenu(LangMenu,MF_STRING|((SGetLangId(false,false)==1)?MF_CHECKED:MF_UNCHECKED),37,GetString4ThisLang(75));//¼òÌåÖĞÎÄ 
+	AppendMenu(LangMenu,MF_STRING|((SGetLangId(false,false)==2)?MF_CHECKED:MF_UNCHECKED),38,GetString4ThisLang(76));//·±ÌåÖĞÎÄ 
 	AppendMenu(menu,MF_POPUP,(UINT_PTR)LangMenu,GetString4ThisLang(73));//ÓïÑÔ 
 	AppendMenu(AboutMenu,MF_STRING,12,GetString4ThisLang(45));//ÈçºÎÊ¹ÓÃ 
 	AppendMenu(AboutMenu,MF_STRING,6,GetString4ThisLang(28));//µ¯³ö¹ØÓÚĞÅÏ¢¿ò 
@@ -1661,7 +1466,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)NoteText[j][0]);
 			}
 			ShowWindow(hConfig,SW_SHOW);
-			for(int i=1;i<=40;i++) if(GetDlgItem(hConfig,i)) AllowDarkModeForWindow(GetDlgItem(hConfig,i),TRUE); 
+			for(int i=1;i<=40;i++) if(GetDlgItem(hConfig,i)) AllowDarkModeForWindow(GetDlgItem(hConfig,i),TRUE),SendMessage(hConfig,0x111u,(UINT)0xFFFFFFFF80010471,(LPARAM)GetDlgItem(hConfig,i)); 
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
@@ -1684,7 +1489,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//Òş²ØhSet´°¿Ú 
-			for(int i=1;i<=40;i++) if(GetDlgItem(hSet,i)) AllowDarkModeForWindow(GetDlgItem(hSet,i),TRUE); 
+			for(int i=1;i<=40;i++) if(GetDlgItem(hSet,i)) AllowDarkModeForWindow(GetDlgItem(hSet,i),TRUE),SendMessage(hSet,0x111u,(UINT)0xFFFFFFFF80010471,(LPARAM)GetDlgItem(hSet,i)); 
 	}
 		else if(i==2){
 			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
@@ -1696,7 +1501,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 				(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,650,250,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			for(int i=1;i<=40;i++) if(GetDlgItem(hAnyWindow,i)) AllowDarkModeForWindow(GetDlgItem(hAnyWindow,i),TRUE); 
+			for(int i=1;i<=40;i++) if(GetDlgItem(hAnyWindow,i)) AllowDarkModeForWindow(GetDlgItem(hAnyWindow,i),TRUE),SendMessage(hAnyWindow,0x111u,(UINT)0xFFFFFFFF80010471,(LPARAM)GetDlgItem(hAnyWindow,i)); 
 		}
 		else if(i==3){
 			hFB=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
@@ -1706,7 +1511,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(63),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hFB,(HMENU)32,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(62),WS_VISIBLE|WS_CHILD,10,10,150,125,hFB,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,"EDIT","",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL,160,10,600,200,hFB,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			for(int i=1;i<=40;i++) if(GetDlgItem(hFB,i)) AllowDarkModeForWindow(GetDlgItem(hFB,i),TRUE);
+			for(int i=1;i<=40;i++) if(GetDlgItem(hFB,i)) AllowDarkModeForWindow(GetDlgItem(hFB,i),TRUE),SendMessage(hFB,0x111u,(UINT)0xFFFFFFFF80010471,(LPARAM)GetDlgItem(hFB,i));
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
 	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//Ìí¼Ó

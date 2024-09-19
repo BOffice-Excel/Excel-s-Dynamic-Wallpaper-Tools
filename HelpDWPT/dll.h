@@ -1,5 +1,7 @@
 #pragma once
+#ifndef DLLIMPORT
 #define DLLIMPORT __declspec(dllexport)
+#endif
 enum GETPERM{
 	GP_FILEREAD=0,//允许读取文件 
 	GP_FILEWRITE,//允许写入文件 

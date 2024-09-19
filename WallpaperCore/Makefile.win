@@ -1,0 +1,35 @@
+# Project: WallpaperCore
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+RES      = WallpaperCore_private.res
+OBJ      = dllmain.o $(RES)
+LINKOBJ  = dllmain.o $(RES)
+LIBS     = -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib32" -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -O2 -s -flto ../lib32(Used_in_compilation)/libgdi32.a -m32
+INCS     = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = WallpaperCore.dll
+CXXFLAGS = $(CXXINCS) -m32 -DBUILDING_DLL=1
+CFLAGS   = $(INCS) -m32 -DBUILDING_DLL=1
+RM       = rm.exe -f
+DEF      = libWallpaperCore.def
+STATIC   = libWallpaperCore.a
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN) $(DEF) $(STATIC)
+
+$(BIN): $(LINKOBJ)
+	$(CPP) -shared $(LINKOBJ) -o $(BIN) $(LIBS) -Wl,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
+
+dllmain.o: dllmain.cpp
+	$(CPP) -c dllmain.cpp -o dllmain.o $(CXXFLAGS)
+
+WallpaperCore_private.res: WallpaperCore_private.rc 
+	$(WINDRES) -i WallpaperCore_private.rc -F pe-i386 --input-format=rc -o WallpaperCore_private.res -O coff 
+

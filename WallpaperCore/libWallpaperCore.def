@@ -1,0 +1,13 @@
+EXPORTS
+    DwpThread = DwpThread@4 @1
+    DwpThread@4 @2
+    EnumWindowProc = EnumWindowProc@8 @3
+    EnumWindowProc@8 @4
+    GetString4ThisLang @5
+    PutToDesktop @6
+    SGetLangId @7
+    SGetQuietMode @8
+    SGetVidPath @9
+    StartDwp @10
+    StopDWPProc = StopDWPProc@8 @11
+    StopDWPProc@8 @12
