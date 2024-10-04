@@ -1,4 +1,4 @@
-[Jump to English](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools?tab=readme-ov-file#%English)
+[Jump to English](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools?tab=readme-ov-file#English)
 # 中文
 > 如有疑惑\建议，请转到[Issues](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools/issues)提交
 > 
