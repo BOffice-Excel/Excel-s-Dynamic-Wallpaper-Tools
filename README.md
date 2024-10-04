@@ -1,4 +1,4 @@
-[Jump to English](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools/edit/main/README.md#English)
+[Jump to English](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools?tab=readme-ov-file#%English)
 # 中文
 > 如有疑惑\建议，请转到[Issues](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools/issues)提交
 > 
@@ -173,7 +173,7 @@
 > > > ```
 > > > 还是比较简单的，好了，以上就是这篇文档的全部内容，DWPT还有待发展，如果感觉可以的话点个star吧
 > # 结束
-[中文]("https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools/edit/main/README.md#%E4%B8%AD%E6%96%87")
+[中文](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools?tab=readme-ov-file#%E4%B8%AD%E6%96%87)
 # English
 > if you have any doubts or suggestions, please go to [Issues](https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools/issues)Submit
 > 
