@@ -11,8 +11,8 @@ LIBS     = -L"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib32" -L"C:
 INCS     = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/ywh11/AppData/Local/Programs/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = WallpaperCore.dll
-CXXFLAGS = $(CXXINCS) -m32 -DBUILDING_DLL=1
-CFLAGS   = $(INCS) -m32 -DBUILDING_DLL=1
+CXXFLAGS = $(CXXINCS) -m32 -lgdi32 -lurlmon -luser32 -DBUILDING_DLL=1
+CFLAGS   = $(INCS) -m32 -lgdi32 -lurlmon -luser32 -DBUILDING_DLL=1
 RM       = rm.exe -f
 DEF      = libWallpaperCore.def
 STATIC   = libWallpaperCore.a
