@@ -1065,6 +1065,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					CheckMenuItem(LangMenu,38,MF_CHECKED);
 					break;
 				}
+				case 39:{
+					WinExec("start https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools",SW_HIDE);
+					break;
+				}
 			}
 			break;
 		}
@@ -1118,6 +1122,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					PostMessage(hwnd,WM_COMMAND,wParam,NULL);
 					break;
 				}
+				case NM_CLICK:
+			    case NM_RETURN:{
+			        PNMLINK pNMLink=(PNMLINK)lParam;
+			        LITEM item=pNMLink->item;
+			        if ((((LPNMHDR)lParam)->idFrom == 39) && (item.iLink == 0)){
+			            ShellExecuteW(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
+			        }
+			        break;
+			    }
 			}
 			break;
 		}
@@ -1231,7 +1244,7 @@ int main(int argc,char *argv[]) {//main函数
 		}
 	} 
 	NameOfPro = argv[0];//当前程序目录+名称 
-	if(hasCmd==false) runAsAdmin();
+	//if(hasCmd==false) runAsAdmin();
 	programName = argv[0];
 	for(int i=strlen(programName)-1;i>=0;i--){//获取当前位置 
 		if(programName[i]!='\\') programName[i]=NULL;
@@ -1460,6 +1473,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)GetString4ThisLang(64+j));
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)NoteText[j][0]);
 			}
+			CreateWindowEx(0,"SysLink","<A HREF=\"https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools\">Github</A>",WS_VISIBLE|WS_CHILD,20,270,500,30,hConfig, (HMENU)39, NULL, NULL);
+			SendDlgItemMessage(hConfig,39,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hConfig,SW_SHOW);
 		}
 		else if(i==1){
