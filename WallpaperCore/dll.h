@@ -20,7 +20,7 @@ extern "C"{
 	DLLIMPORT DWORD WINAPI DwpThread(LPVOID lparam);
 	DLLIMPORT void StartDwp(const char PathA[],BOOL Quiet);
 	DLLIMPORT BOOL CALLBACK StopDWPProc(_In_ HWND hWnd,_In_ LPARAM lparam);
-	DLLIMPORT char* GetString4ThisLang(UINT index);
+	//DLLIMPORT char* GetString4ThisLang(UINT index);
 	DLLIMPORT bool SGetQuietMode(bool Set,bool beQuiet);
 	DLLIMPORT int SGetLangId(bool Set,int LangId);
 	DLLIMPORT char* SGetVidPath(bool Set,char Source[]);

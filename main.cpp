@@ -42,7 +42,11 @@ NOTIFYICONDATAA nid;//托盘图标数据
 HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu(),LangMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
 typedef BOOL WINAPI (*SPDA)(VOID);
+typedef char* (*GS4TL)(UINT);
+typedef void (*ISS_FT)();
 SPDA SetProcessDPIAwarev;//设置该进程的DPI，不设会很丑且比例不太对 
+GS4TL GetString4ThisLang;
+ISS_FT InitStringSystem;
 HFONT hFont = CreateFont(25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("思源"));//默认字体 
 //char BtnName[5][30]={"新建配置文件","编辑配置文件","应用配置文件","停止动态壁纸","关于Dynamic Wallpaper Tools"};//按钮文本 
 
@@ -1047,6 +1051,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					CheckMenuItem(LangMenu,36,MF_CHECKED);
 					CheckMenuItem(LangMenu,37,MF_UNCHECKED);
 					CheckMenuItem(LangMenu,38,MF_UNCHECKED);
+					SGetLangId(TRUE,0); 
 					break;
 				} 
 				case 37:{
@@ -1055,6 +1060,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					CheckMenuItem(LangMenu,36,MF_UNCHECKED);
 					CheckMenuItem(LangMenu,37,MF_CHECKED);
 					CheckMenuItem(LangMenu,38,MF_UNCHECKED);
+					SGetLangId(TRUE,1); 
 					break;
 				}
 				case 38:{
@@ -1063,10 +1069,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					CheckMenuItem(LangMenu,36,MF_UNCHECKED);
 					CheckMenuItem(LangMenu,37,MF_UNCHECKED);
 					CheckMenuItem(LangMenu,38,MF_CHECKED);
+					SGetLangId(TRUE,2); 
 					break;
 				}
 				case 39:{
 					WinExec("start https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools",SW_HIDE);
+					break;
+				}
+				case 40:{
+					if(IsDlgButtonChecked(hwnd,40)){
+						WritePrivateProfileString("Main","BootDp","0",ConfigFile);
+						CheckDlgButton(hwnd,40,BST_UNCHECKED);
+					}
+					else{
+						WritePrivateProfileString("Main","BootDp","1",ConfigFile);
+						CheckDlgButton(hwnd,40,BST_CHECKED);
+					}
 					break;
 				}
 			}
@@ -1188,20 +1206,51 @@ DWORD WINAPI nidThread(LPVOID lparam){//系统托盘图标主进程
 }*/
 
 int main(int argc,char *argv[]) {//main函数 
+	NameOfPro=(char*)malloc(114514);
+	GetModuleFileName(NULL,NameOfPro,114510);
+	//NameOfPro = argv[0];//当前程序目录+名称 
+	//if(hasCmd==false) runAsAdmin();
+	programName=(char*)malloc(114514);
+	GetModuleFileName(NULL,programName,114510);
+	for(int i=strlen(programName)-1;i>=0;i--){//获取当前位置 
+		if(programName[i]!='\\') programName[i]=NULL;
+		else break;
+	}
+	sprintf(ConfigFile,"%s\\Config.ini",programName);
 	HMODULE hModule = LoadLibrary("user32.dll");
 	if(hModule){
 		SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
 		if(SetProcessDPIAwarev) SetProcessDPIAwarev();//清晰！！！ 
 	} 
+	hModule = LoadLibrary("WallpaperCore.dll");
+	if(hModule){
+		InitStringSystem = (ISS_FT)GetProcAddress(hModule,"InitStringSystem");
+		GetString4ThisLang = (GS4TL)GetProcAddress(hModule,"GetString4ThisLang");
+		if(!GetString4ThisLang){
+			MessageBox(NULL,"Load function \"GetString4ThisLang\" failed!","System error.",MB_ICONERROR|MB_OK);
+			return -1;
+		}
+		if(!InitStringSystem){
+			MessageBox(NULL,"Load function \"InitStringSystem\" failed!","System error.",MB_ICONERROR|MB_OK);
+			return -1;
+		}
+	} 
+	else{
+		MessageBox(NULL,"Load library \"WallpaperCore.dll\" failed!","System error.",MB_ICONERROR|MB_OK);
+		return -1;
+	}
+	InitStringSystem();
 	bool hasCmd=false;
 	//处理命令行 
 	if(argc>1) for(int i=0;i<strlen(argv[1]);i++) if(argv[1][i]>='A'&&argv[1][i]<='Z') argv[1][i]+='a'-'A';
 	if(argc==2){
 		if(strcmp(argv[1],"-q")==0){
-			GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",RETURN);
-			SGetQuietMode(true,true);
-			SGetVidPath(true,RETURN);
-			DwpThread(NULL);
+			if(GetPrivateProfileInt("Main","BootDp",0,ConfigFile)==TRUE){
+				GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",RETURN);
+				SGetQuietMode(true,true);
+				SGetVidPath(true,RETURN);
+				DwpThread(NULL);
+			}
 			hasCmd=true;
 		}
 		strcpy(CmdLine,argv[1]);
@@ -1243,14 +1292,6 @@ int main(int argc,char *argv[]) {//main函数
 			}
 		}
 	} 
-	NameOfPro = argv[0];//当前程序目录+名称 
-	//if(hasCmd==false) runAsAdmin();
-	programName = argv[0];
-	for(int i=strlen(programName)-1;i>=0;i--){//获取当前位置 
-		if(programName[i]!='\\') programName[i]=NULL;
-		else break;
-	}
-	sprintf(ConfigFile,"%s\\Config.ini",programName);
 	SGetLangId(true,GetPrivateProfileInt("Main","Lang",-1,ConfigFile));
 	if(GetPrivateProfileInt("Main","FirstSetup",false,ConfigFile)==false){
 		LOGFONT lf;
@@ -1479,7 +1520,9 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
-			HWND hwnd=CreateWindow("button",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,760,25,hSet,(HMENU)10,NULL,NULL);
+			HWND hwnd=CreateWindow("button",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,200,25,hSet,(HMENU)10,NULL,NULL);//开机自启动 
+			CreateWindow("button",GetString4ThisLang(82),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,300,20,760,25,hSet,(HMENU)40,NULL,NULL);//是否在启动时启动动态壁纸 
+			SendDlgItemMessageA(hSet,40,WM_SETFONT,(WPARAM)hFont,NULL);
 			CreateWindow("button","Developer Options",WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,760,25,hSet,(HMENU)35,NULL,NULL);
 			SendDlgItemMessageA(hSet,35,WM_SETFONT,(WPARAM)hFont,NULL);
 			CheckDlgButton(hSet,35,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==1)?BST_CHECKED:BST_UNCHECKED));//设置CheckBox是否被确认 
