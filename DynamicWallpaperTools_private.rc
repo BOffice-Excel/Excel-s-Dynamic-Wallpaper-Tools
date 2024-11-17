@@ -18,8 +18,8 @@ A ICON "DynamicWallpaperTools.ico"
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 0,0,8,0
-PRODUCTVERSION 0,0,8,0
+FILEVERSION 0,0,9,0
+PRODUCTVERSION 0,0,9,0
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -27,14 +27,14 @@ FILETYPE VFT_APP
     BLOCK "080404E4"
     {
       VALUE "CompanyName", ""
-      VALUE "FileVersion", "0.0.8.0"
+      VALUE "FileVersion", "0.0.9.0"
       VALUE "FileDescription", "动态壁纸工具 by Office-Excel"
       VALUE "InternalName", "动态壁纸工具"
       VALUE "LegalCopyright", "版权所有Office-Excel"
       VALUE "LegalTrademarks", ""
       VALUE "OriginalFilename", "DynamicWallpaperTools.exe"
       VALUE "ProductName", "动态壁纸工具"
-      VALUE "ProductVersion", "0.0.8.0"
+      VALUE "ProductVersion", "0.0.9.0"
     }
   }
   BLOCK "VarFileInfo"

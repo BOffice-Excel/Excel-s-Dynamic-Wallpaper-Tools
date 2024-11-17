@@ -387,7 +387,7 @@ DWPT項目内容：\r\n\
 作者的嗶哩嗶哩帳號：Office-Excel（地址： https://space.bilibili.com/1439352366/ ）\r\n\
 "},//86
 };*/
-LPSTR MUIText[87][3];
+LPSTR MUIText[120][3];
 
 char Path[114514],res[114514];
 int LangID=IL_UNSET/*语言ID*/;
@@ -442,18 +442,18 @@ MUIText[6][1]=(char*)calloc(159,sizeof(char));
 strcpy(MUIText[6][1],"警告！此操作会关闭所有在类名为“Progman的窗口下的所有窗口！");
 MUIText[6][2]=(char*)calloc(158,sizeof(char));
 strcpy(MUIText[6][2],"警告！ 此操作會關閉所有在類名為“Progman的視窗下的所有視窗");
-MUIText[7][0]=(char*)calloc(155,sizeof(char));
-strcpy(MUIText[7][0],"Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)");
-MUIText[7][1]=(char*)calloc(153,sizeof(char));
-strcpy(MUIText[7][1],"视频文件（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）");
-MUIText[7][2]=(char*)calloc(153,sizeof(char));
-strcpy(MUIText[7][2],"視頻檔案（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）");
-MUIText[8][0]=(char*)calloc(143,sizeof(char));
-strcpy(MUIText[8][0],"Dynamic Wallpaper Configuration Files (.dp)");
-MUIText[8][1]=(char*)calloc(132,sizeof(char));
-strcpy(MUIText[8][1],"Dynamic Wallpaper配置文件（.dp）");
-MUIText[8][2]=(char*)calloc(130,sizeof(char));
-strcpy(MUIText[8][2],"Dynamic Wallpaper設定檔（.dp）");
+MUIText[7][0]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[7][0],"Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0\0",sizeof("Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0\0"));
+MUIText[7][1]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[7][1],"视频文件（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有文件（*.*）\0*.*\0\0",sizeof("视频文件（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有文件（*.*）\0*.*\0\0"));
+MUIText[7][2]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[7][2],"視頻檔案（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有檔案（*.*）\0*.*\0\0",sizeof("視頻檔案（*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv）\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0所有檔案（*.*）\0*.*\0\0"));
+MUIText[8][0]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[8][0],"Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0\0",sizeof("Dynamic Wallpaper Configuration Files (.dp)\0*.dp\0\0"));
+MUIText[8][1]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[8][1],"Dynamic Wallpaper配置文件（.dp）\0*.dp\0\0",sizeof("Dynamic Wallpaper配置文件（.dp）\0*.dp\0\0"));
+MUIText[8][2]=(char*)calloc(1000,sizeof(char));
+memcpy(MUIText[8][2],"Dynamic Wallpaper設定檔（.dp）\0*.dp\0\0",sizeof("Dynamic Wallpaper設定檔（.dp）\0*.dp\0\0"));
 MUIText[9][0]=(char*)calloc(126,sizeof(char));
 strcpy(MUIText[9][0],"Do you need to play sound?");
 MUIText[9][1]=(char*)calloc(118,sizeof(char));
@@ -461,11 +461,11 @@ strcpy(MUIText[9][1],"是否需要播放声音？");
 MUIText[9][2]=(char*)calloc(118,sizeof(char));
 strcpy(MUIText[9][2],"是否需要播放聲音？");
 MUIText[10][0]=(char*)calloc(344,sizeof(char));
-strcpy(MUIText[10][0],"Programming: Office-Excel\r\nReference video by 偶尔有点小迷糊, video id: BV1HZ4y1978a (press to cancel to view original video)\r\nTools used: Dev-C++, Code language: C++\r\nProject start date: April 21, 2024\r\nVersion: 0.0.8.0\nTranslator: Baidu Translate");
+strcpy(MUIText[10][0],"Programming: Office-Excel\r\nReference video by 偶尔有点小迷糊, video id: BV1HZ4y1978a (press to cancel to view original video)\r\nTools used: Dev-C++, Code language: C++\r\nProject start date: April 21, 2024\r\nVersion: 0.0.9.0\nTranslator: Baidu Translate");
 MUIText[10][1]=(char*)calloc(282,sizeof(char));
-strcpy(MUIText[10][1],"程序制作：Office-Excel\r\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\r\n使用工具：Dev-C++，代码语言：C++\r\n项目开始日期：2024/04/21\r\n版本：0.0.8.0\r\n翻译器：百度翻译");
+strcpy(MUIText[10][1],"程序制作：Office-Excel\r\n参考视频 by 偶尔有点小迷糊，视频id：BV1HZ4y1978a（按下取消查看原视频）\r\n使用工具：Dev-C++，代码语言：C++\r\n项目开始日期：2024/04/21\r\n版本：0.0.9.0\r\n翻译器：百度翻译");
 MUIText[10][2]=(char*)calloc(283,sizeof(char));
-strcpy(MUIText[10][2],"程式製作：Office-Excel\r\n參攷視頻 by 偶尔有点小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\r\n使用工具：Dev-C++，程式碼語言：C++\r\n項目開始日期：2024/04/21\r\n版本：0.0.8.0\r\n翻譯器：百度翻譯");
+strcpy(MUIText[10][2],"程式製作：Office-Excel\r\n參攷視頻 by 偶尔有点小迷糊，視頻id:BV1HZ4y1978a（按下取消查看原視頻）\r\n使用工具：Dev-C++，程式碼語言：C++\r\n項目開始日期：2024/04/21\r\n版本：0.0.9.0\r\n翻譯器：百度翻譯");
 MUIText[11][0]=(char*)calloc(174,sizeof(char));
 strcpy(MUIText[11][0],"The configuration file operation is complete. Do you want to start it now?");
 MUIText[11][1]=(char*)calloc(134,sizeof(char));
@@ -1283,12 +1283,115 @@ DWPT項目内容：\r\n\
 		strcpy(MUIText[94][1],"关闭");
 		MUIText[94][2]=(char*)calloc(104,sizeof(char));
 		strcpy(MUIText[94][2],"關閉");
+		
+		MUIText[95][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[95][0],"Save");
+		MUIText[95][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[95][1],"保存");
+		MUIText[95][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[95][2],"保存");
+		
+		MUIText[96][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[96][0],"Only save");
+		MUIText[96][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[96][1],"仅保存");
+		MUIText[96][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[96][2],"僅保存");
+		
+		MUIText[97][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[97][0],"Save and start.");
+		MUIText[97][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[97][1],"保存并启动");
+		MUIText[97][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[97][2],"保存並啟動");
+		
+		MUIText[98][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[98][0],"Play sound.");
+		MUIText[98][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[98][1],"播放音乐。");
+		MUIText[98][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[98][2],"播放音樂。");
+		
+		MUIText[99][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[99][0],"Video Path:\r\n\r\nThere are some environment variable you can use: ");
+		MUIText[99][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[99][1],"视频路径：\r\n\r\n您可以使用以下环境变量：");
+		MUIText[99][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[99][2],"視頻路徑：\r\n\r\n您可以使用以下環境變數：");
+		
+		MUIText[100][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[100][0],"View all");
+		MUIText[100][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[100][1],"查看所有");
+		MUIText[100][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[100][2],"查看所有");
+		
+		MUIText[101][0]=(char*)calloc(105,sizeof(char));
+		strcpy(MUIText[101][0],"The last edited configuration file has not been saved yet! Do you need to save the last edited configuration file or continue editing the unsaved configuration file?");
+		MUIText[101][1]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[101][1],"上一次编辑的配置文件还未保存！是否需要保存上一次编辑的配置文件或继续编辑未保存的配置文件？");
+		MUIText[101][2]=(char*)calloc(104,sizeof(char));
+		strcpy(MUIText[101][2],"上一次編輯的設定檔還未保存！ 是否需要保存上一次編輯的設定檔或繼續編輯未保存的設定檔？");
+		
+		MUIText[102][0]=(char*)calloc(1000,sizeof(char));
+		strcpy(MUIText[102][0],"Video location variable:\r\n - ${dp} = Directory where the profile is located.\r\n - ${pp} = The path of this program.\r\n - .. = The last directory.\r\n - ${System environment variable name} = The variable from system.\r\n\r\nExample:\r\n${SystemRoot}\\1.mp4\r\nAfter parsing is completed, it is: C:\\WINDOWS\\1.mp4");
+		MUIText[102][1]=(char*)calloc(1000,sizeof(char));
+		strcpy(MUIText[102][1],"视频位置环境变量：\r\n - ${dp} = 配置文件所在的目录。\r\n - ${pp} = 此程序的路径。\r\n - …=上一个目录。\r\n - ${系统环境变量名} = 系统中的环境变量。\r\n\r\n例如：\r\n${SystemRoot}\\1.mp4\r\n解析完成后是：C:\\WINDOWS\\1.mp4");
+		MUIText[102][2]=(char*)calloc(1000,sizeof(char));
+		strcpy(MUIText[102][2],"視頻位置環境變數：\r\n - ${dp} = 設定檔所在的目錄。 \r\n - ${pp} = 此程式的路徑。 \r\n - …=上一個目錄。 \r\n - ${系統環境變數名} = 系統中的環境變數。 \r\n\r\n例如：\r\n${SystemRoot}\\1.mp4\r\n解析完成後是：C:\\WINDOWS\\1.mp4");
+	}
+	char TS[114514],Result[114514],SysVarName[11451],SysVar[11451];
+	DLLIMPORT void SolvePath(char ProfilePath[],char SolvedPath[],bool *Sound){
+		char in;DWORD dw=0;
+		HANDLE hFile=CreateFile(ProfilePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		ReadFile(hFile,&in,1,&dw,NULL);
+		*Sound=(in=='t'||in=='T');
+		ReadFile(hFile,TS,GetFileSize(hFile,NULL)-1,&dw,NULL);
+		CloseHandle(hFile);
+		int pointer=0,SysVarPointer;
+		memset(Result,false,sizeof(Result));
+		for(int i=0;i<strlen(TS);i++){
+			if(TS[i]=='$'&&TS[i+1]=='{'){
+				i+=2;
+				SysVarPointer=0;
+				while(TS[i]!='}') SysVarName[SysVarPointer++]=TS[i++];
+				SysVarName[SysVarPointer]='\0';
+				if(strcmp(SysVarName,"pp")==0||strcmp(SysVarName,"Pp")==0||strcmp(SysVarName,"PP")==0||strcmp(SysVarName,"pP")==0){
+					GetModuleFileName(NULL,SysVar,11445);
+					for(int j=strlen(SysVar)-1;SysVar[j]!='\\';j--) SysVar[j]='\0';
+					SysVar[strlen(SysVar)-1]='\0';
+				}
+				else if(strcmp(SysVarName,"dp")==0||strcmp(SysVarName,"Dp")==0||strcmp(SysVarName,"DP")==0||strcmp(SysVarName,"dP")==0){
+					strcpy(SysVar,ProfilePath);
+					for(int j=strlen(SysVar)-1;SysVar[j]!='\\';j--) SysVar[j]='\0';
+					SysVar[strlen(SysVar)-1]='\0';
+				}
+				else{
+					GetEnvironmentVariableA(SysVarName,SysVar,11451);
+				}
+				strcat(Result,SysVar);
+				pointer=strlen(Result);
+			}
+			else if(Result[pointer-1]=='\\'&&TS[i]=='.'&&TS[i+1]=='.'&&TS[i+2]=='\\'){
+				i++;
+				Result[pointer-1]='\0';
+				for(int j=pointer-2;Result[j]!='\\';j--) Result[j]='\0';
+				Result[strlen(Result)-1]='\0';
+				pointer=strlen(Result);
+			}
+			else{
+				Result[pointer++]=TS[i];
+			}
+		}
+		Result[pointer]='\0';
+		strcpy(SolvedPath,Result);
+		return;
 	}
 	DLLIMPORT void GetVer(LPVERSION lpVersion){
 		lpVersion->Main=0;
 		lpVersion->Sub=0;
-		lpVersion->Release=7;
-		lpVersion->Make=3;
+		lpVersion->Release=9;
+		lpVersion->Make=0;
 		return ;
 	}
 	DLLIMPORT char* GetString4ThisLang(UINT index){
@@ -1324,7 +1427,7 @@ DWPT項目内容：\r\n\
 	
 	DLLIMPORT WINBOOL PutToDesktop(HWND Wallpaper){//将Wallpaper窗口放进桌面里 
 		if(!Wallpaper){//...
-			MessageBox(Wallpaper,"将桌面放进桌面里？你在这套娃呢","Error",MB_ICONINFORMATION|MB_OK);
+			MessageBox(Wallpaper,"SetParent function run failed!","Error",MB_ICONINFORMATION|MB_OK);
 			return FALSE;
 		}
 		int width=GetDeviceCaps(GetDC(0), DESKTOPHORZRES),height=GetDeviceCaps(GetDC(0), DESKTOPVERTRES);//获取屏幕设备分辨率 
@@ -1339,7 +1442,7 @@ DWPT項目内容：\r\n\
 	
 	DLLIMPORT DWORD WINAPI DwpThread(LPVOID lparam){//核心线程 
 		if((!quietMode)&&MessageBox(NULL,GetString4ThisLang(6),"Warning",MB_YESNO|MB_ICONWARNING)!=6) return 0; //警告 
-		char cmd[1145]=" \"",sound,VP[1145],TmpPath[MAX_PATH+20],str1[MAX_PATH*4];//初始化一堆文本 
+		char cmd[1145]=" \"",/*sound,*/VP[1145],TmpPath[MAX_PATH+20],str1[MAX_PATH*4];//初始化一堆文本 
 		STARTUPINFO si = {0};
 		PROCESS_INFORMATION pi = {0};//设置启动进程的结构体 
 		HWND PROGMAN=FindWindow("Progman", 0);
@@ -1359,13 +1462,16 @@ DWPT項目内容：\r\n\
 	<head><title>VideoPlayer</title><HTA:APPLICATION APPLICATIONNAME=\"VideoPlayer\"ID=\"VideoPlayer\" BORDER=\"none\" SHOWINTASKBAR=\"no\" VERSION=\"0.0\"/></head>\
 	<body><video style=\"width:100%;height:100%;left:0px;top:0px;position:fixed\" autoplay loop");//设置文本 
 		Sleep(500);
-		
+		/*
 		DWORD dw=0;
 		HANDLE hFile=CreateFile(Path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);//打开文件句柄 
 		ReadFile(hFile,&sound,1,&dw,NULL);
-		ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);
+		ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);*/
+		bool sound;
+		SolvePath(Path,VP,&sound);
 		int i=strlen(VP);
 		while(!(VP[i]<='Z'&&VP[i]>='A'||VP[i]<='z'&&VP[i]>='a'||VP[i]<='9'&&VP[i]>='0')) VP[i]=NULL,i--;//读入文件的数据 
+		//MessageBox(NULL,VP,NULL,NULL);
 		
 		//使用mshta.exe播放
 		GetTempPath(MAX_PATH,TmpPath);//获取临时目录并创建Temporary.hta临时文件 
@@ -1373,7 +1479,7 @@ DWPT項目内容：\r\n\
 		if(TmpPath[strlen(TmpPath)-1]=='\r') TmpPath[strlen(TmpPath)-1]=NULL;
 		freopen(TmpPath,"w",stdout);
 		while(_access(VP,0)==-1) VP[strlen(VP)-1]=NULL;
-		printf("%s%s><source src=\"%s",str1,(sound=='t'?"":" muted"),VP);
+		printf("%s%s><source src=\"%s",str1,(sound?"":" muted"),VP);
 		strcpy(str1,"\" type=\"video/mp4\">ERROR</video></body></html>");
 		printf("%s",str1);
 		fclose(stdout);//退出写入 

@@ -34,19 +34,19 @@ UnitCount=2
 [VersionInfo]
 Major=0
 Minor=0
-Release=8
+Release=9
 Build=0
 LanguageID=2052
 CharsetID=1252
 CompanyName=
-FileVersion=0.0.8.0
+FileVersion=0.0.9.0
 FileDescription=动态壁纸工具 by Office-Excel
 InternalName=动态壁纸工具
 LegalCopyright=版权所有Office-Excel
 LegalTrademarks=
 OriginalFilename=DynamicWallpaperTools.exe
 ProductName=动态壁纸工具
-ProductVersion=0.0.8.0
+ProductVersion=0.0.9.0
 AutoIncBuildNr=0
 SyncProduct=1
 

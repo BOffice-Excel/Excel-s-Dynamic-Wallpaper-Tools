@@ -34,19 +34,19 @@ UnitCount=3
 [VersionInfo]
 Major=0
 Minor=0
-Release=8
+Release=9
 Build=0
 LanguageID=2052
 CharsetID=1252
 CompanyName=Office-Excel
-FileVersion=0.0.8.0
+FileVersion=0.0.9.0
 FileDescription=Developed using the Dev-C++ IDE
 InternalName=DWPT°ïÖú¿â(DWPT Helper)
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=HelpDWPT.dll
 ProductName=DWPT°ïÖú¿â(DWPT Helper)
-ProductVersion=0.0.8.0
+ProductVersion=0.0.9.0
 AutoIncBuildNr=0
 SyncProduct=1
 

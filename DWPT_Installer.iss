@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.8.0"
+#define MyAppVersion "0.0.9.0"
 #define MyAppPublisher "Office-Excel"
-#define MyAppURL "https://space.bilibili.com/1439352366/"
+#define MyAppURL "https://boffice-excel.github.io/Website/DWPT/"
 #define MyAppExeName "DynamicWallpaperTools.exe"
 #define MyAppAssocName "DWPT Wallpaper Profile(DWPT±⁄÷Ω≈‰÷√œÓ)"
 #define MyAppAssocExt ".dp"

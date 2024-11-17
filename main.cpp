@@ -30,14 +30,18 @@
 #define IL_Simplified_Chinese 1 //简体中文 
 #define IL_Traditional_Chinese 2 //繁体中文 
 
+const char BUTTON_CLASS[]="BUTTON";
+const char EDIT_CLASS[]="EDIT";
+const char STATIC_CLASS[]="STATIC";
+
 HINSTANCE HInstance; //程序的句柄，使用GetModuleHandle函数即可获得 
 WNDCLASSEX wc; //窗口类，创建窗口时需要注册一个类才可以创建窗口，否则报错 
 char RETURN[1145],*programName,*NameOfPro,CmdLine[1145],ConfigFile[MAX_PATH+1];//一堆的字符串，大多都是临时的、在StartDwp函数中使用 
 DWORD dw/*打开文件时的标记*//*,BtnType[5]={BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE,BT_MOUSEMOVE}/*记住所有按钮状态*/;
 HANDLE hFile;//文件句柄 
 HDC hdc=GetDC(0);//获取桌面的HDC（用来搞窗口选择器） 
-int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/;
-HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow,hFB;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
+int W /*桌面宽度*/,H /*桌面高度*/,BtnWparam[5]={1,2,3,5,6}/*引用按钮事件ID标记*/,isEditing=FALSE;
+HWND /*hWnd,*/HWND_,hTab,hSet,hConfig,hAnyWindow,hStaticDef,hBossKey,hsti,ChooseWindow,hFB,hEditor;//hWnd=托盘图标窗口句柄，HWND_=主窗口句柄 
 NOTIFYICONDATAA nid;//托盘图标数据 
 HMENU FileMenu=CreatePopupMenu(),HistroyMenu=CreatePopupMenu(),FuncMenu=CreatePopupMenu(),LangMenu=CreatePopupMenu();//文件菜单，全局是因为托盘右键要用这个 
 int WINAPI winMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int);
@@ -255,7 +259,7 @@ int SetDefFont(LOGFONTA *lpLogFont){//设置默认字体
 		WritePrivateProfileString("Font","lfEscapement",TempStr,ConfigFile);
 		WritePrivateProfileString("Font","lfFaceName",lf.lfFaceName,ConfigFile);
 		sprintf(TempStr,"%d",lf.lfHeight);
-		WritePrivateProfileString("Font","lflfHeight",TempStr,ConfigFile);
+		WritePrivateProfileString("Font","lfHeight",TempStr,ConfigFile);
 		sprintf(TempStr,"%d",lf.lfItalic);
 		WritePrivateProfileString("Font","lfItalic",TempStr,ConfigFile);
 		sprintf(TempStr,"%d",lf.lfOrientation);
@@ -456,6 +460,7 @@ BOOL CALLBACK SetDPI(_In_ HWND hwnd, _In_ LPARAM Lparam){
 
 /* This is where all the input to the window goes to */
 
+char Editing[114514];
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {//窗口过程 
 	switch (Message) {
 		/* Upon destruction, tell the main thread to stop */
@@ -478,17 +483,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				DSWA DwmSetWindowAttribute=(DSWA)GetProcAddress(hModule,"DwmSetWindowAttribute");
 				if(DwmSetWindowAttribute) DwmSetWindowAttribute(hwnd, 20,  &Dark, 4);
 			}
-			hModule=GetModuleHandle("uxtheme.dll");
+			hModule=LoadLibrary("uxtheme.dll");
+			
 			if(hModule){
-				typedef VOID (*SPAM)(int);
+				typedef VOID (*ADMW)(HWND,BOOLEAN);
+				ADMW AllowDarkModeForWindow=(ADMW)GetProcAddress(hModule,MAKEINTRESOURCE(133));
+				if(AllowDarkModeForWindow) for(int i=0;i<=114;i++)AllowDarkModeForWindow(GetDlgItem(hwnd,i),TRUE);
+				typedef VOID (*SPAM)(BOOL);
 				SPAM SetPreferredAppMode=(SPAM)GetProcAddress(hModule,MAKEINTRESOURCE(135));
 				if(SetPreferredAppMode) SetPreferredAppMode(2);
 				typedef VOID (*FMT)();
 				FMT FlushMenuThemes=(FMT)GetProcAddress(hModule,MAKEINTRESOURCE(136));
 				if(FlushMenuThemes) FlushMenuThemes();
-				typedef VOID (*ADMW)(HWND,BOOLEAN);
-				ADMW AllowDarkModeForWindow=(ADMW)GetProcAddress(hModule,MAKEINTRESOURCE(133));
-				if(AllowDarkModeForWindow) AllowDarkModeForWindow(hwnd,TRUE);
 			}
 			break;
 		}
@@ -643,13 +649,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case 2:{//编辑配置项 
 					char SP[1145];
 					if(!OpenFileDlg(hwnd,GetString4ThisLang(8),SP)) break;
+					TabCtrl_SetCurFocus(hTab,4);
+					if(isEditing){
+						int c=MessageBox(HWND_,GetString4ThisLang(101),"Question",MB_YESNOCANCEL|MB_ICONQUESTION);
+						switch(c){
+							case IDOK:{
+								SendMessage(hEditor,WM_COMMAND,(WPARAM)43,NULL);
+								break;
+							}
+							case IDNO:{
+								break;
+							}
+							case IDCANCEL:{
+								return 0;
+								break;
+							}
+						}
+					}
+					strcpy(Editing,SP);
 					char sound,VP[1145],put;
 					dw=0;
 					hFile=CreateFile(SP, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 					ReadFile(hFile,&sound,1,&dw,NULL);
 					ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);
+					CloseHandle(hFile);
 					if(VP[strlen(VP)-1]=='\r') VP[strlen(VP)-1]=NULL;
-					ChooseChangeObject:
+					SetDlgItemText(hEditor,29,VP);
+					CheckDlgButton(hEditor,45,(sound=='t'||sound=='T')?BST_CHECKED:BST_UNCHECKED); 
+					/*ChooseChangeObject:
 					int c=MessageBox(hwnd,GetString4ThisLang(12),"Edit Profile",MB_YESNOCANCEL|MB_ICONQUESTION);
 					switch(c){
 						case 6:{
@@ -688,7 +715,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 							ToastMessage("Dynamic Wallpaper Tools","~(^-^)~",GetString4ThisLang(80));//提示启动完成 
 							Sleep(1000);
 						}
-					}
+					}*/
 					break;
 				}
 				case 3:{//启动配置项 
@@ -761,13 +788,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case 8:{//修改启动的配置文件 
 					char SP[1145];
 					if(GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",SP)!=ERROR_SUCCESS) break;
+					TabCtrl_SetCurFocus(hTab,4);
+					if(isEditing){
+						int c=MessageBox(HWND_,GetString4ThisLang(101),"Question",MB_YESNOCANCEL|MB_ICONQUESTION);
+						switch(c){
+							case IDOK:{
+								SendMessage(hEditor,WM_COMMAND,(WPARAM)43,NULL);
+								break;
+							}
+							case IDNO:{
+								break;
+							}
+							case IDCANCEL:{
+								return 0;
+								break;
+							}
+						}
+					}
+					strcpy(Editing,SP);
 					char sound,VP[1145],put;
 					dw=0;
 					hFile=CreateFile(SP, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 					ReadFile(hFile,&sound,1,&dw,NULL);
 					ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);
+					CloseHandle(hFile);
 					if(VP[strlen(VP)-1]=='\r') VP[strlen(VP)-1]=NULL;
-					DefChooseChangeObject:
+					SetDlgItemText(hEditor,29,VP);
+					CheckDlgButton(hEditor,45,(sound=='t'||sound=='T')?BST_CHECKED:BST_UNCHECKED); 
+					/*DefChooseChangeObject:
 					int c=MessageBox(hwnd,GetString4ThisLang(12),"Edit profile",MB_YESNOCANCEL|MB_ICONQUESTION);
 					switch(c){
 						case 6:{
@@ -807,7 +855,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 							ToastMessage("Dynamic Wallpaper Tools","~(^-^)~",GetString4ThisLang(80));//提示启动完成 
 							Sleep(1000);
 						}
-					}
+					}*/
 					break;
 				}
 				case 9:{//启动默认的配置文件 
@@ -946,6 +994,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					break;
 				}
+				case 29:{
+					if(TabCtrl_GetCurSel(hTab)==4){
+						switch(HIWORD(wParam)){
+							case EN_CHANGE:{
+								isEditing=TRUE;
+								break;
+							}
+						}
+					}
+					break;
+				}
 				case 30:{//快速启动 
 					char Command[1145],VPath[1145],ProP[1145];
 					GetModuleFileName(NULL,ProP,1140);
@@ -1016,7 +1075,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case 33:{
 					char str_path[1145];
 					if(!OpenFileDlg(HWND_,GetString4ThisLang(7),str_path)) break;
-					SetDlgItemText(hFB,29,str_path);
+					if(SendMessage(hTab,TCM_GETCURSEL,NULL,NULL)==4) SetDlgItemText(hEditor,29,str_path);
+					else SetDlgItemText(hFB,29,str_path);
 					break;
 				}
 				case 34:{
@@ -1087,6 +1147,42 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					break;
 				}
+				case 41:{
+					MessageBox(HWND_,GetString4ThisLang(102),"Information",MB_ICONINFORMATION);
+					break;
+				}
+				case 42:{//打开保存菜单 
+					HMENU FastBoot=CreatePopupMenu();
+					AppendMenu(FastBoot,MF_STRING,(UINT_PTR)43,GetString4ThisLang(96));
+					AppendMenu(FastBoot,MF_STRING,(UINT_PTR)44,GetString4ThisLang(97));
+					POINT p;
+					GetCursorPos(&p);
+		            TrackPopupMenu(FastBoot, TPM_LEFTALIGN | TPM_RIGHTBUTTON, p.x, p.y, NULL, HWND_, NULL);
+					break;
+				}
+				case 43:{
+					if(strcmp(Editing,"")==0) if(!SaveFileDlg(HWND_,GetString4ThisLang(8),Editing,"dp")) return FALSE;
+					DWORD dw=0;
+					HANDLE hFile=CreateFile(Editing, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL); 
+					char sound,Path[114514];
+					sound=((IsDlgButtonChecked(hwnd,45))?'t':'f');
+					WriteFile(hFile,&sound,1,&dw,NULL);
+					GetDlgItemText(hwnd,29,Path,114510);
+					WriteFile(hFile,Path,strlen(Path)-1,&dw,NULL);
+					CloseHandle(hFile);
+					isEditing=FALSE;
+					return TRUE;
+					break;
+				}
+				case 44:{
+					if(SendMessage(hwnd,WM_COMMAND,(WPARAM)43,NULL)==FALSE) break;
+					StartDwp(Editing,FALSE);
+					break;
+				}
+				case 45:{
+					isEditing=TRUE;
+					break;
+				}
 			}
 			break;
 		}
@@ -1115,24 +1211,35 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 						ShowWindow(hSet,SW_HIDE);
 						ShowWindow(hAnyWindow,SW_HIDE);
 						ShowWindow(hConfig,SW_SHOW);
+						ShowWindow(hEditor,SW_HIDE);
 					}
 					else if(result==1){
 						ShowWindow(hFB,SW_HIDE);
 						ShowWindow(hConfig,SW_HIDE);
 						ShowWindow(hAnyWindow,SW_HIDE);
 						ShowWindow(hSet,SW_SHOW);
+						ShowWindow(hEditor,SW_HIDE);
 					}
 					else if(result==2){
 						ShowWindow(hFB,SW_HIDE);
 						ShowWindow(hConfig,SW_HIDE);
 						ShowWindow(hAnyWindow,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==0)?SW_HIDE:SW_SHOW));
 						ShowWindow(hSet,SW_HIDE);
+						ShowWindow(hEditor,SW_HIDE);
 					}
 					else if(result==3){
 						ShowWindow(hFB,SW_SHOW);
 						ShowWindow(hConfig,SW_HIDE);
 						ShowWindow(hAnyWindow,SW_HIDE);
 						ShowWindow(hSet,SW_HIDE);
+						ShowWindow(hEditor,SW_HIDE);
+					}
+					else if(result==4){
+						ShowWindow(hFB,SW_HIDE);
+						ShowWindow(hConfig,SW_HIDE);
+						ShowWindow(hAnyWindow,SW_HIDE);
+						ShowWindow(hSet,SW_HIDE);
+						ShowWindow(hEditor,SW_SHOW);
 					}
 					break;
 				}
@@ -1144,9 +1251,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			    case NM_RETURN:{
 			        PNMLINK pNMLink=(PNMLINK)lParam;
 			        LITEM item=pNMLink->item;
-			        if ((((LPNMHDR)lParam)->idFrom == 39) && (item.iLink == 0)){
-			            ShellExecuteW(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
-			        }
+			        if(pNMLink->hdr.idFrom==39) ShellExecuteW(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
 			        break;
 			    }
 			}
@@ -1157,6 +1262,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			if(GetPixel(hdc,10,10)==RGB(0,0,0)) break;
 			RECT rect;GetWindowRect(hwnd,&rect);rect.bottom-=rect.top;rect.right-=rect.left;rect.left=rect.top=0;
 			InvertRect(hdc,&rect);
+			break;
+		}
+		case WM_KEYUP:{
+			if(wParam==VK_TAB&&key_press(VK_CONTROL)){
+				int index=SendMessage(hTab,TCM_GETCURSEL,NULL,NULL);
+				index++;
+				if(index==5) index=0;
+				TabCtrl_SetCurFocus(hTab,index);
+			}
 			break;
 		}
 		default:
@@ -1278,7 +1392,7 @@ int main(int argc,char *argv[]) {//main函数
 	}
 	else if(argc==4){
 		if(strcmp(argv[1],"-f")==0){
-			if((GetFileAttributes(argv[3])!=INVALID_FILE_ATTRIBUTES)&&(strcmp(argv[2],"true")==0||strcmp(argv[2],"false")==0)){
+			if((strcmp(argv[2],"true")==0||strcmp(argv[2],"false")==0)){
 				char tPath[1145];
 				GetTempPath(1140,tPath);
 				strcat(tPath,"FastLaunch.dp");
@@ -1431,7 +1545,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	}
 	
 	//添加历史到HistroyMenu
-	char str[]="File[114]",path[1145];
+	char str[10],path[1145];
 	for(int i=0;i<=9;i++){
 		sprintf(str,"File[%d]",i);
 		GetPrivateProfileString("Histroy",str,NULL,path,MAX_PATH+2,ConfigFile);
@@ -1496,34 +1610,31 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
     hTab = CreateWindow("SysTabControl32", NULL, WS_CHILD | WS_VISIBLE,
         0, 0, 800, 400, HWND_,(HMENU) 13, NULL, NULL);//创建Tab Control
     SendMessage(hTab,WM_SETFONT,(WPARAM)hFont,NULL);
-	
-	HMODULE hModule=GetModuleHandle("uxtheme.dll");
-	typedef VOID (*ADMW)(HWND,BOOLEAN);
-	ADMW AllowDarkModeForWindow=(ADMW)GetProcAddress(hModule,MAKEINTRESOURCE(133));
-    for(int i=0;i<4;i++){//创建两个窗口和控件 
+    for(int i=0;i<5;i++){//创建两个窗口和控件 
 		tie.mask = TCIF_TEXT;
 	    if(i<2) tie.pszText = GetString4ThisLang(13+i);//获取语言文本 
 	    else if(i==2) tie.pszText=GetString4ThisLang(46);
-	    else tie.pszText=GetString4ThisLang(58);
+	    else if(i==3) tie.pszText=GetString4ThisLang(58);
+	    else if(i==4) tie.pszText=(char*)"Profile Editor";
 		if(i==0){
 			hConfig=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			for(int j=0;j<5;j++){//记住：Dev C++编译时要在 项目[P] -> 项目属性[O] 里面选中"支持 Windows XP 主题"，否则难看到去世！！！ 
-				HWND hwnd=CreateWindow("Button",GetString4ThisLang(j)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE|BS_COMMANDLINK,BtnPos[j].left,BtnPos[j].top,BtnPos[j].right-BtnPos[j].left,BtnPos[j].bottom-BtnPos[j].top,hConfig,(HMENU)BtnWparam[j],NULL,NULL);
+				HWND hwnd=CreateWindow(BUTTON_CLASS,GetString4ThisLang(j)/*BtnName[i]*/,WS_CHILD|WS_VISIBLE|BS_COMMANDLINK,BtnPos[j].left,BtnPos[j].top,BtnPos[j].right-BtnPos[j].left,BtnPos[j].bottom-BtnPos[j].top,hConfig,(HMENU)BtnWparam[j],NULL,NULL);
 				//CreateButton(BtnName[i],BtnPos[i].left,BtnPos[i].top,BtnPos[i].right-BtnPos[i].left,BtnPos[i].bottom-BtnPos[i].top,HWND_,(HMENU)BtnWparam[i],NULL,NULL);
 				SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)GetString4ThisLang(64+j));
 				//SendMessage(hwnd,BCM_SETNOTE,NULL,(LPARAM)NoteText[j][0]);
 			}
-			CreateWindowEx(0,"SysLink","<A HREF=\"https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools\">Github</A>",WS_VISIBLE|WS_CHILD,20,270,500,30,hConfig, (HMENU)39, NULL, NULL);
+			CreateWindowEx(0,"SysLink","<A HREF=\"https://github.com/BOffice-Excel/Excel-s-Dynamic-Wallpaper-Tools\">Github</A>  <A HREF=\"https://boffice-excel.github.io/Website/DWPT/\">Homepage</A>",WS_VISIBLE|WS_CHILD,20,270,500,30,hConfig, (HMENU)39, NULL, NULL);
 			SendDlgItemMessage(hConfig,39,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hConfig,SW_SHOW);
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
-			HWND hwnd=CreateWindow("button",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,200,25,hSet,(HMENU)10,NULL,NULL);//开机自启动 
-			CreateWindow("button",GetString4ThisLang(82),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,300,20,760,25,hSet,(HMENU)40,NULL,NULL);//是否在启动时启动动态壁纸 
+			HWND hwnd=CreateWindow(BUTTON_CLASS,GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,250,25,hSet,(HMENU)10,NULL,NULL);//开机自启动 
+			CreateWindow(BUTTON_CLASS,GetString4ThisLang(82),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,300,20,760,25,hSet,(HMENU)40,NULL,NULL);//是否在启动时启动动态壁纸 
 			SendDlgItemMessageA(hSet,40,WM_SETFONT,(WPARAM)hFont,NULL);
-			CreateWindow("button","Developer Options",WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,760,25,hSet,(HMENU)35,NULL,NULL);
+			CreateWindow(BUTTON_CLASS,"Developer Options",WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,760,25,hSet,(HMENU)35,NULL,NULL);
 			SendDlgItemMessageA(hSet,35,WM_SETFONT,(WPARAM)hFont,NULL);
 			CheckDlgButton(hSet,35,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==1)?BST_CHECKED:BST_UNCHECKED));//设置CheckBox是否被确认 
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
@@ -1532,36 +1643,47 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			GetRegValue(HKEY_CURRENT_USER,"Software\\DWPT","SrtDefCfgPath",RETURN);
 			char str[1145];
 			sprintf(str,"%s%s",GetString4ThisLang(16),RETURN);
-			hStaticDef=CreateWindow("STATIC",str,WS_CHILD|WS_VISIBLE,20,60,660,25,hSet,(HMENU)100,NULL,NULL);
+			hStaticDef=CreateWindow(STATIC_CLASS,str,WS_CHILD|WS_VISIBLE,20,60,660,25,hSet,(HMENU)100,NULL,NULL);
 			SendMessage(hStaticDef,WM_SETFONT,(WPARAM)hFont,NULL);
 			hBossKey=CreateWindowEx(0,"msctls_hotkey32",NULL,WS_CHILD|WS_VISIBLE,160,100,500,30,hSet,NULL,NULL,NULL);
 			SendMessage(hBossKey,WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			hwnd=CreateWindow("button",GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
+			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(51),WS_CHILD|WS_VISIBLE,20,100,120,30,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,100,100,30,hSet,(HMENU)26,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			hwnd=CreateWindow(BUTTON_CLASS,GetString4ThisLang(17),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,680,60,100,30,hSet,(HMENU)7,NULL,NULL);
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
 			ShowWindow(hSet,SW_HIDE);//隐藏hSet窗口 
 		}
 		else if(i==2){
 			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
 			ShowWindow(hAnyWindow,SW_HIDE);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			hsti=CreateWindowEx(0,"BUTTON",NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			hsti=CreateWindowEx(0,BUTTON_CLASS,NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
 			SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(hINstance,"IDI_SELECTUNUSE"));
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
+			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
 				(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,685,200,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(79),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,625,200,60,40,hAnyWindow,(HMENU)39,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(50),WS_CHILD|WS_VISIBLE,100,250,650,25,hAnyWindow,(HMENU)2,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(47),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,685,200,60,40,hAnyWindow,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(79),WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,625,200,60,40,hAnyWindow,(HMENU)39,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 		}
 		else if(i==3){
 			hFB=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
 			ShowWindow(hFB,SW_HIDE);
 			//SendMessage(CreateWindowEx(0,"BUTTON","",BS_ICON|WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL), BM_SETIMAGE, IMAGE_BITMAP,(LPARAM)LoadBitmap(hINstance,"IDB_OPEN"));
-			SendMessage(CreateWindowEx(0,"BUTTON","...",WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"BUTTON",GetString4ThisLang(63),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hFB,(HMENU)32,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"STATIC",GetString4ThisLang(62),WS_VISIBLE|WS_CHILD,10,10,150,125,hFB,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindowEx(0,"EDIT","",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER,160,10,600,200,hFB,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,"...",WS_VISIBLE|WS_CHILD,760,10,32,32,hFB,(HMENU)33,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(63),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hFB,(HMENU)32,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(62),WS_VISIBLE|WS_CHILD,10,10,150,125,hFB,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(100),WS_VISIBLE|WS_CHILD,20,220,100,32,hFB,(HMENU)41,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,EDIT_CLASS,"",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER,160,10,600,200,hFB,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+		}
+		else if(i==4){
+			hEditor=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
+			ShowWindow(hEditor,SW_HIDE);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,"...",WS_VISIBLE|WS_CHILD,760,10,32,32,hEditor,(HMENU)33,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(95),BS_SPLITBUTTON|WS_VISIBLE|WS_CHILD,160,220,200,80,hEditor,(HMENU)42,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(99),WS_VISIBLE|WS_CHILD,10,10,150,200,hEditor,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(100),WS_VISIBLE|WS_CHILD,20,220,100,32,hEditor,(HMENU)41,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,EDIT_CLASS,"",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER,160,10,600,200,hEditor,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindow(BUTTON_CLASS,GetString4ThisLang(98),WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,400,250,760,25,hEditor,(HMENU)45,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
 	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//添加

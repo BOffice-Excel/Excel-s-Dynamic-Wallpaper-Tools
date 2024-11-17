@@ -10,6 +10,7 @@ EXPORTS
     SGetLangId @9
     SGetQuietMode @10
     SGetVidPath @11
-    StartDwp @12
-    StopDWPProc = StopDWPProc@8 @13
-    StopDWPProc@8 @14
+    SolvePath @12
+    StartDwp @13
+    StopDWPProc = StopDWPProc@8 @14
+    StopDWPProc@8 @15

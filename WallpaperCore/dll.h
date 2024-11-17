@@ -24,5 +24,6 @@ extern "C"{
 	DLLIMPORT bool SGetQuietMode(bool Set,bool beQuiet);
 	DLLIMPORT int SGetLangId(bool Set,int LangId);
 	DLLIMPORT char* SGetVidPath(bool Set,char Source[]);
+	DLLIMPORT void SolvePath(char ProfilePath[],char SolvedPath[],bool *Sound);
 }
 #endif

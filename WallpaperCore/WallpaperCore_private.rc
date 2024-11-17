@@ -8,8 +8,8 @@
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 0,0,8,0
-PRODUCTVERSION 0,0,8,0
+FILEVERSION 0,0,9,0
+PRODUCTVERSION 0,0,9,0
 FILETYPE VFT_DLL
 {
   BLOCK "StringFileInfo"
@@ -17,14 +17,14 @@ FILETYPE VFT_DLL
     BLOCK "080404E4"
     {
       VALUE "CompanyName", "Office-Excel"
-      VALUE "FileVersion", "0.0.8.0"
+      VALUE "FileVersion", "0.0.9.0"
       VALUE "FileDescription", "Developed using the Dev-C++ IDE"
       VALUE "InternalName", "WallpaperCore"
       VALUE "LegalCopyright", ""
       VALUE "LegalTrademarks", ""
       VALUE "OriginalFilename", "WallpaperCore.dll"
       VALUE "ProductName", "WallpaperCore"
-      VALUE "ProductVersion", "0.0.8.0"
+      VALUE "ProductVersion", "0.0.9.0"
     }
   }
   BLOCK "VarFileInfo"
