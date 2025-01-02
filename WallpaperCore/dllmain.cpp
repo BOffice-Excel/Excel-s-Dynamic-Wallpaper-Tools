@@ -439,9 +439,9 @@ strcpy(MUIText[5][2],"Ÿo·¨´òé_Ò•îlï@Ê¾³ÌÊ½\"mshta.exe\"£¨Ê¹ÓÃžgÓ[Æ÷²¥·ÅÒ•îl£©£¬Õ
 MUIText[6][0]=(char*)calloc(178,sizeof(char));
 strcpy(MUIText[6][0],"Warning! This operation will close all windows under the class name \"Progman\"!");
 MUIText[6][1]=(char*)calloc(159,sizeof(char));
-strcpy(MUIText[6][1],"¾¯¸æ£¡´Ë²Ù×÷»á¹Ø±ÕËùÓÐÔÚÀàÃûÎª¡°ProgmanµÄ´°¿ÚÏÂµÄËùÓÐ´°¿Ú£¡");
+strcpy(MUIText[6][1],"¾¯¸æ£¡´Ë²Ù×÷»á¹Ø±ÕËùÓÐÔÚÀàÃûÎª¡°Progman¡±µÄ´°¿ÚÏÂµÄËùÓÐ´°¿Ú£¡");
 MUIText[6][2]=(char*)calloc(158,sizeof(char));
-strcpy(MUIText[6][2],"¾¯¸æ£¡ ´Ë²Ù×÷•þêPé]ËùÓÐÔÚîÃûžé¡°ProgmanµÄÒ•´°ÏÂµÄËùÓÐÒ•´°");
+strcpy(MUIText[6][2],"¾¯¸æ£¡ ´Ë²Ù×÷•þêPé]ËùÓÐÔÚîÃûžé¡°Progman¡±µÄÒ•´°ÏÂµÄËùÓÐÒ•´°");
 MUIText[7][0]=(char*)calloc(1000,sizeof(char));
 memcpy(MUIText[7][0],"Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0\0",sizeof("Video files (*.mp4 ,*.mov, *.m4v, *.mpg, *.mpeg, *.wmv)\0*.mp4;*.mov;*.m4v;*.mpg;*.mpeg;*.wmv\0All files (*.*) \0*.*\0\0"));
 MUIText[7][1]=(char*)calloc(1000,sizeof(char));
@@ -461,11 +461,11 @@ strcpy(MUIText[9][1],"ÊÇ·ñÐèÒª²¥·ÅÉùÒô£¿");
 MUIText[9][2]=(char*)calloc(118,sizeof(char));
 strcpy(MUIText[9][2],"ÊÇ·ñÐèÒª²¥·ÅÂ•Òô£¿");
 MUIText[10][0]=(char*)calloc(344,sizeof(char));
-strcpy(MUIText[10][0],"Programming: Office-Excel\r\nReference video by Å¼¶ûÓÐµãÐ¡ÃÔºý, video id: BV1HZ4y1978a (press to cancel to view original video)\r\nTools used: Dev-C++, Code language: C++\r\nProject start date: April 21, 2024\r\nVersion: 0.0.9.0\nTranslator: Baidu Translate");
+strcpy(MUIText[10][0],"Programming: Office-Excel\r\nReference video by Å¼¶ûÓÐµãÐ¡ÃÔºý, video id: BV1HZ4y1978a (press to cancel to view original video)\r\nTools used: Dev-C++, Code language: C++\r\nProject start date: April 21, 2024\r\nVersion: 0.0.9.1\nTranslator: Baidu Translate");
 MUIText[10][1]=(char*)calloc(282,sizeof(char));
-strcpy(MUIText[10][1],"³ÌÐòÖÆ×÷£ºOffice-Excel\r\n²Î¿¼ÊÓÆµ by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\r\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\r\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\r\n°æ±¾£º0.0.9.0\r\n·­ÒëÆ÷£º°Ù¶È·­Òë");
+strcpy(MUIText[10][1],"³ÌÐòÖÆ×÷£ºOffice-Excel\r\n²Î¿¼ÊÓÆµ by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬ÊÓÆµid£ºBV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­ÊÓÆµ£©\r\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬´úÂëÓïÑÔ£ºC++\r\nÏîÄ¿¿ªÊ¼ÈÕÆÚ£º2024/04/21\r\n°æ±¾£º0.0.9.1\r\n·­ÒëÆ÷£º°Ù¶È·­Òë");
 MUIText[10][2]=(char*)calloc(283,sizeof(char));
-strcpy(MUIText[10][2],"³ÌÊ½Ñu×÷£ºOffice-Excel\r\n…¢”ŽÒ•îl by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\r\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\r\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\r\n°æ±¾£º0.0.9.0\r\n·­×gÆ÷£º°Ù¶È·­×g");
+strcpy(MUIText[10][2],"³ÌÊ½Ñu×÷£ºOffice-Excel\r\n…¢”ŽÒ•îl by Å¼¶ûÓÐµãÐ¡ÃÔºý£¬Ò•îlid:BV1HZ4y1978a£¨°´ÏÂÈ¡Ïû²é¿´Ô­Ò•îl£©\r\nÊ¹ÓÃ¹¤¾ß£ºDev-C++£¬³ÌÊ½´aÕZÑÔ£ºC++\r\ní—Ä¿é_Ê¼ÈÕÆÚ£º2024/04/21\r\n°æ±¾£º0.0.9.1\r\n·­×gÆ÷£º°Ù¶È·­×g");
 MUIText[11][0]=(char*)calloc(174,sizeof(char));
 strcpy(MUIText[11][0],"The configuration file operation is complete. Do you want to start it now?");
 MUIText[11][1]=(char*)calloc(134,sizeof(char));
@@ -1326,11 +1326,11 @@ DWPTí—Ä¿ÄÚÈÝ£º\r\n\
 		MUIText[100][2]=(char*)calloc(104,sizeof(char));
 		strcpy(MUIText[100][2],"²é¿´ËùÓÐ");
 		
-		MUIText[101][0]=(char*)calloc(105,sizeof(char));
+		MUIText[101][0]=(char*)calloc(1000,sizeof(char));
 		strcpy(MUIText[101][0],"The last edited configuration file has not been saved yet! Do you need to save the last edited configuration file or continue editing the unsaved configuration file?");
-		MUIText[101][1]=(char*)calloc(104,sizeof(char));
+		MUIText[101][1]=(char*)calloc(1000,sizeof(char));
 		strcpy(MUIText[101][1],"ÉÏÒ»´Î±à¼­µÄÅäÖÃÎÄ¼þ»¹Î´±£´æ£¡ÊÇ·ñÐèÒª±£´æÉÏÒ»´Î±à¼­µÄÅäÖÃÎÄ¼þ»ò¼ÌÐø±à¼­Î´±£´æµÄÅäÖÃÎÄ¼þ£¿");
-		MUIText[101][2]=(char*)calloc(104,sizeof(char));
+		MUIText[101][2]=(char*)calloc(1000,sizeof(char));
 		strcpy(MUIText[101][2],"ÉÏÒ»´Î¾ŽÝ‹µÄÔO¶¨™nß€Î´±£´æ£¡ ÊÇ·ñÐèÒª±£´æÉÏÒ»´Î¾ŽÝ‹µÄÔO¶¨™n»òÀ^Àm¾ŽÝ‹Î´±£´æµÄÔO¶¨™n£¿");
 		
 		MUIText[102][0]=(char*)calloc(1000,sizeof(char));
@@ -1391,7 +1391,7 @@ DWPTí—Ä¿ÄÚÈÝ£º\r\n\
 		lpVersion->Main=0;
 		lpVersion->Sub=0;
 		lpVersion->Release=9;
-		lpVersion->Make=0;
+		lpVersion->Make=1;
 		return ;
 	}
 	DLLIMPORT char* GetString4ThisLang(UINT index){

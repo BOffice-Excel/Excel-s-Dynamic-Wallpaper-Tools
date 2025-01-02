@@ -631,7 +631,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		case WM_COMMAND: {//当xxx被触发 
 			switch (LOWORD(wParam)) {
 				case 1:{//创建新的配置项 
-					char Video[1145],SP[1145],chr;
+					/*char Video[1145],SP[1145],chr;
 					bool isSound=false;
 					if(!SaveFileDlg(hwnd,GetString4ThisLang(8),SP,"dp")) break;//另存为某个dp文件 
 					if(!OpenFileDlg(hwnd,GetString4ThisLang(7),Video)) break;//获取视频 
@@ -643,7 +643,40 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					if(MessageBox(hwnd,GetString4ThisLang(11),"Information",MB_YESNO|MB_ICONQUESTION)==6){
 						StartDwp(SP,false);//启动！ 
 						ToastMessage("Dynamic Wallpaper Tools","~(^-^)~",GetString4ThisLang(80));//提示启动完成 
+					}*/
+					char SP[1145];
+					//if(!OpenFileDlg(hwnd,GetString4ThisLang(8),SP)) break;
+					if(!SaveFileDlg(hwnd,GetString4ThisLang(8),SP,"dp")) break;
+					TabCtrl_SetCurFocus(hTab,4);
+					if(isEditing){
+						int c=MessageBox(HWND_,GetString4ThisLang(101),"Question",MB_YESNOCANCEL|MB_ICONQUESTION);
+						switch(c){
+							case IDOK:{
+								SendMessage(hEditor,WM_COMMAND,(WPARAM)43,NULL);
+								break;
+							}
+							case IDNO:{
+								break;
+							}
+							case IDCANCEL:{
+								return 0;
+								break;
+							}
+						}
 					}
+					strcpy(Editing,SP);
+					CheckDlgButton(hEditor,45,BST_UNCHECKED);
+					SetDlgItemText(hEditor,29,"");
+					/*
+					char sound,VP[1145],put;
+					dw=0;
+					hFile=CreateFile(SP, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+					ReadFile(hFile,&sound,1,&dw,NULL);
+					ReadFile(hFile,VP,GetFileSize(hFile,NULL)-1,&dw,NULL);
+					CloseHandle(hFile);
+					if(VP[strlen(VP)-1]=='\r') VP[strlen(VP)-1]=NULL;
+					SetDlgItemText(hEditor,29,VP);
+					CheckDlgButton(hEditor,45,(sound=='t'||sound=='T')?BST_CHECKED:BST_UNCHECKED); */
 					break;
 				}
 				case 2:{//编辑配置项 
@@ -1187,15 +1220,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			break;
 		}
 		case WM_CTLCOLORBTN: 
-		case WM_CTLCOLORSTATIC:{
-			HBRUSH hbrBkgnd=NULL;
-	        HDC hdcStatic = (HDC) wParam;
-	        SetTextColor(hdcStatic, RGB(0,0,0));
-	        SetBkColor(hdcStatic, RGB(255,255,255));
-	        if (hbrBkgnd == NULL){
-	            hbrBkgnd = CreateSolidBrush(RGB(255,255,255));
+		case WM_CTLCOLORSTATIC:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORSCROLLBAR:{
+			static HBRUSH hbrBkgnd=NULL;
+	        HDC hdcStatic=(HDC)wParam;
+	        SetTextColor(hdcStatic, RGB(255,255,255));
+	        SetBkColor(hdcStatic, RGB(25,25,25));
+	    	if (hbrBkgnd==NULL){
+	            hbrBkgnd=CreateSolidBrush(RGB(25,25,25));
 	        }
 	        return (INT_PTR)hbrBkgnd;
+	        break;
         }
 		case WM_SYSCOMMAND:{
 			if(LOWORD(wParam)==11||LOWORD(wParam)==4) return WndProc(hwnd,WM_COMMAND,wParam,lParam);
@@ -1271,6 +1310,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				if(index==5) index=0;
 				TabCtrl_SetCurFocus(hTab,index);
 			}
+			break;
+		}
+		case WM_DROPFILES:{
+			char File[114514],cmd[114514];
+			DragQueryFileA((HDROP)wParam,0,File,114510);
+			if((File[strlen(File)-1]=='p'||File[strlen(File)-1]=='P')&&(File[strlen(File)-2]=='d'||File[strlen(File)-2]=='D')&&File[strlen(File)-3]=='.'){
+				sprintf(cmd,"\"%s\" -o \"%s\"",NameOfPro,File);
+				WinExec(cmd,SW_HIDE);
+			}
+			DragFinish((HDROP)wParam);
 			break;
 		}
 		default:
@@ -1534,7 +1583,7 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 	wc.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wc.hbrBackground = CreateSolidBrush(RGB(25,25,25));//(HBRUSH)(COLOR_WINDOW + 1);
 	wc.lpszClassName = "DWPT_PRIVATECLASS";
 	wc.hIcon = LoadIcon(hINstance,"IDI_SELECTUNUSE"); /* Load a standard icon */
 	wc.hIconSm = LoadIcon(hINstance,"A"); /* use the name "A" to use the project icon */
@@ -1631,10 +1680,13 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		}
 		else if(i==1){
 			hSet=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);
-			HWND hwnd=CreateWindow(BUTTON_CLASS,GetString4ThisLang(15),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,250,25,hSet,(HMENU)10,NULL,NULL);//开机自启动 
-			CreateWindow(BUTTON_CLASS,GetString4ThisLang(82),WS_CHILD|WS_VISIBLE|BS_CHECKBOX,300,20,760,25,hSet,(HMENU)40,NULL,NULL);//是否在启动时启动动态壁纸 
+			HWND hwnd=CreateWindow(BUTTON_CLASS,0,WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,20,25,25,hSet,(HMENU)10,NULL,NULL);//开机自启动 
+			SendMessage(CreateWindow("STATIC",GetString4ThisLang(15),WS_CHILD|WS_VISIBLE,45,20,225,25,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			CreateWindow(BUTTON_CLASS,0,WS_CHILD|WS_VISIBLE|BS_CHECKBOX,300,20,25,25,hSet,(HMENU)40,NULL,NULL);//是否在启动时启动动态壁纸 
+			SendMessage(CreateWindow("STATIC",GetString4ThisLang(82),WS_CHILD|WS_VISIBLE,325,20,735,25,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendDlgItemMessageA(hSet,40,WM_SETFONT,(WPARAM)hFont,NULL);
-			CreateWindow(BUTTON_CLASS,"Developer Options",WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,760,25,hSet,(HMENU)35,NULL,NULL);
+			CreateWindow(BUTTON_CLASS,0,WS_CHILD|WS_VISIBLE|BS_CHECKBOX,20,140,25,25,hSet,(HMENU)35,NULL,NULL);
+			SendMessage(CreateWindow("STATIC","Developer Options",WS_CHILD|WS_VISIBLE,45,140,735,25,hSet,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendDlgItemMessageA(hSet,35,WM_SETFONT,(WPARAM)hFont,NULL);
 			CheckDlgButton(hSet,35,((GetPrivateProfileInt("Main","DevMode",0,ConfigFile)==1)?BST_CHECKED:BST_UNCHECKED));//设置CheckBox是否被确认 
 			SendMessage(hwnd,WM_SETFONT,(WPARAM)hFont,NULL);
@@ -1656,7 +1708,8 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 		else if(i==2){
 			hAnyWindow=CreateWindow("DWPT_PRIVATECLASS",NULL,WS_CHILD|WS_VISIBLE,0,30,800,360,hTab,NULL,NULL,NULL);	
 			ShowWindow(hAnyWindow,SW_HIDE);
-			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(48),WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindowEx(0,BUTTON_CLASS,0,WS_CHILD|WS_VISIBLE|BS_GROUPBOX,50,10,700,280,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindow("STATIC",GetString4ThisLang(48),WS_CHILD|WS_VISIBLE,70,10,300,25,hAnyWindow,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			hsti=CreateWindowEx(0,BUTTON_CLASS,NULL,WS_CHILD|WS_VISIBLE|BS_ICON,100,50,50,50,hAnyWindow,(HMENU)13,NULL,NULL);
 			SendMessage(hsti, BM_SETIMAGE, IMAGE_ICON,(LPARAM)LoadIcon(hINstance,"IDI_SELECTUNUSE"));
 			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(49),WS_CHILD|WS_VISIBLE,100,120,600,120,hAnyWindow,(HMENU)1,NULL,NULL),WM_SETFONT,
@@ -1683,10 +1736,34 @@ int WINAPI winMain(_In_ HINSTANCE hINstance,_In_opt_ HINSTANCE hPrevInstance,_In
 			SendMessage(CreateWindowEx(0,STATIC_CLASS,GetString4ThisLang(99),WS_VISIBLE|WS_CHILD,10,10,150,200,hEditor,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,BUTTON_CLASS,GetString4ThisLang(100),WS_VISIBLE|WS_CHILD,20,220,100,32,hEditor,(HMENU)41,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 			SendMessage(CreateWindowEx(0,EDIT_CLASS,"",WS_VISIBLE|WS_CHILD|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER,160,10,600,200,hEditor,(HMENU)29,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
-			SendMessage(CreateWindow(BUTTON_CLASS,GetString4ThisLang(98),WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,400,250,760,25,hEditor,(HMENU)45,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindow(BUTTON_CLASS,0,WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,400,250,25,25,hEditor,(HMENU)45,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+			SendMessage(CreateWindow("STATIC",GetString4ThisLang(98),WS_CHILD|WS_VISIBLE,425,250,735,25,hEditor,NULL,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 		}
 	    //count=SendMessage(hTab, TCM_GETITEMCOUNT, 0, 0);
 	    SendMessage(hTab, TCM_INSERTITEM, i, (LPARAM) (LPTCITEM) &tie);//添加
+	}
+	HMODULE hModule=NULL;
+	hModule=LoadLibrary("uxtheme.dll");
+	if(hModule){
+		typedef VOID (*SWT)(HWND,LPCWSTR,LPCWSTR);
+		SWT SetWindowTheme=(SWT)GetProcAddress(hModule,"SetWindowTheme");
+		if(SetWindowTheme){
+			for(int i=0;i<=50;i++){
+				HWND hTmp;
+				hTmp=GetDlgItem(hConfig,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+				hTmp=GetDlgItem(hSet,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+				hTmp=GetDlgItem(hAnyWindow,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+				hTmp=GetDlgItem(hFB,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+				hTmp=GetDlgItem(hEditor,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+			};
+			SetWindowTheme(hTab,L"DarkMode_Explorer",NULL);
+			SetWindowTheme(HWND_,L"DarkMode_Explorer",NULL);
+		}
 	}
 	
 	HMENU hMenu=GetSystemMenu(HWND_,FALSE);

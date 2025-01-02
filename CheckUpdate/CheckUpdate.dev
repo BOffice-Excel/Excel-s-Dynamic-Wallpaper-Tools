@@ -1,17 +1,17 @@
 [Project]
-FileName=HelpDWPT.dev
-Name=HelpDWPT
+FileName=CheckUpdate.dev
+Name=CheckUpdate
 Type=3
 Ver=2
 ObjFiles=
 Includes=
 Libs=
-PrivateResource=HelpDWPT_private.rc
+PrivateResource=CheckUpdate_private.rc
 ResourceIncludes=
 MakeIncludes=
 Compiler=-DBUILDING_DLL=1_@@_
 CppCompiler=-DBUILDING_DLL=1_@@_
-Linker=../lib32(Used_in_compilation)/libgdi32.a_@@_
+Linker=../lib32(Used_in_compilation)/libuxtheme.a_@@_../lib32(Used_in_compilation)/libgdi32.a_@@_../lib32(Used_in_compilation)/libcomctl32.a_@@_../lib32(Used_in_compilation)/liburlmon.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -19,34 +19,34 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=HelpDWPT.dll
+OverrideOutputName=CheckUpdate.dll
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
 Folders=
 IncludeVersionInfo=1
-SupportXPThemes=1
+SupportXPThemes=0
 CompilerSet=3
 CompilerSettings=0000000100000000000000000
 UnitCount=3
 
 [VersionInfo]
-Major=0
+Major=1
 Minor=0
-Release=9
-Build=1
-LanguageID=2052
+Release=0
+Build=0
+LanguageID=1033
 CharsetID=1252
 CompanyName=Office-Excel
-FileVersion=0.0.9.1
-FileDescription=Developed using the Dev-C++ IDE
-InternalName=DWPT°ïÖú¿â(DWPT Helper)
+FileVersion=1.0.0.0
+FileDescription=Updator for DWPT
+InternalName=Check Update
 LegalCopyright=
 LegalTrademarks=
-OriginalFilename=HelpDWPT.dll
-ProductName=DWPT°ïÖú¿â(DWPT Helper)
-ProductVersion=0.0.9.1
+OriginalFilename=CheckUpdate.dll
+ProductName=Updator
+ProductVersion=1.0.0.0
 AutoIncBuildNr=0
 SyncProduct=1
 
@@ -71,7 +71,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=OtherRes.rc
+FileName=Res.rc
 Folder=Resources
 Compile=1
 Link=0

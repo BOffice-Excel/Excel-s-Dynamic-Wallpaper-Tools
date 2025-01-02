@@ -25,6 +25,8 @@ HDC hdc=GetDC(0);
 HFONT hFont1;
 HINSTANCE hinst;
 typedef char* (*GS4TL)(UINT);
+typedef VOID (*SWT)(HWND,LPCWSTR,LPCWSTR);
+typedef VOID (*DSWA)(HWND,DWORD,LPCVOID,DWORD);
 GS4TL GetString4ThisLang;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 	switch(msg){
@@ -71,6 +73,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 			}
 			break;
 		}
+		case WM_CTLCOLORBTN: 
+		case WM_CTLCOLORSTATIC:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORSCROLLBAR:{
+			static HBRUSH hbrBkgnd=NULL;
+	        HDC hdcStatic=(HDC)wParam;
+	        SetTextColor(hdcStatic, RGB(255,255,255));
+	        SetBkColor(hdcStatic, RGB(25,25,25));
+	    	if (hbrBkgnd==NULL){
+	            hbrBkgnd=CreateSolidBrush(RGB(25,25,25));
+	        }
+	        return (INT_PTR)hbrBkgnd;
+	        break;
+        }
 		default:return DefWindowProc(hWnd,msg,wParam,lParam);
 	}
 }
@@ -84,8 +103,10 @@ extern "C" DLLIMPORT void HelpWindow(HWND hwnd){
 	hFont=CreateFont(18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, GB2312_CHARSET, NULL, NULL, NULL, NULL, TEXT("黑体细体"));
 	
 	HMODULE hModule = LoadLibrary("user32.dll");
-	SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
-	SetProcessDPIAwarev();//清晰！！！
+	if(hModule){
+		SetProcessDPIAwarev = (SPDA)GetProcAddress(hModule,"SetProcessDPIAware");
+		if(SetProcessDPIAwarev) SetProcessDPIAwarev();//清晰！！！
+	}
 	
 	WNDCLASSEX wcex;
 	memset(&wcex,0,sizeof wcex);
@@ -97,7 +118,7 @@ extern "C" DLLIMPORT void HelpWindow(HWND hwnd){
 	wcex.hIconSm=wcex.hIcon /*LoadIcon(NULL,IDI_QUESTION)*/; 
 	wcex.style=CS_DBLCLKS|CS_SAVEBITS|CS_GLOBALCLASS;
 	wcex.lpfnWndProc=WndProc;
-	wcex.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);
+	wcex.hbrBackground=CreateSolidBrush(RGB(25,25,25));
 	wcex.hCursor=LoadCursor(NULL,IDC_ARROW);
 	RegisterClassEx(&wcex);
 	
@@ -169,6 +190,26 @@ extern "C" DLLIMPORT void HelpWindow(HWND hwnd){
 	SendMessage(CreateWindow("BUTTON",GetString4ThisLang(92),WS_CHILD|WS_VISIBLE,20,180,150,30,hWnd,(HMENU)5,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 	SendMessage(CreateWindow("BUTTON",GetString4ThisLang(93),WS_CHILD|WS_VISIBLE,20,220,150,30,hWnd,(HMENU)6,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
 	SendMessage(CreateWindow("BUTTON",GetString4ThisLang(94),WS_CHILD|WS_VISIBLE,20,260,150,30,hWnd,(HMENU)7,NULL,NULL),WM_SETFONT,(WPARAM)hFont,NULL);
+	
+	hModule=LoadLibrary("uxtheme.dll");
+	if(hModule){
+		SWT SetWindowTheme=(SWT)GetProcAddress(hModule,"SetWindowTheme");
+		if(SetWindowTheme){
+			for(int i=1;i<=7;i++){
+				HWND hTmp;
+				hTmp=GetDlgItem(hWnd,i);
+				if(hTmp) SetWindowTheme(hTmp,L"DarkMode_Explorer",NULL);
+			}
+			SetWindowTheme(FindWindowEx(hWnd,NULL,"EDIT",NULL),L"DarkMode_Explorer",NULL);
+		}
+	}
+	
+	hModule=LoadLibrary("dwmapi.dll");
+	if(hModule){
+		bool Dark=true;
+		DSWA DwmSetWindowAttribute=(DSWA)GetProcAddress(hModule,"DwmSetWindowAttribute");
+		if(DwmSetWindowAttribute) DwmSetWindowAttribute(hWnd, 20,  &Dark, 4);
+	}
 	
 	ShowWindow(hWnd,SW_SHOW);
 	UpdateWindow(hWnd);
@@ -264,6 +305,26 @@ LRESULT CALLBACK WWatcherProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SendMessage(CreateWindowEx(0,"BUTTON","隐藏窗口",WS_CHILD|WS_VISIBLE,500,80,215,20,hWnd,(HMENU)13,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
 			SendMessage(CreateWindowEx(0,"BUTTON","显示窗口",WS_CHILD|WS_VISIBLE,600,100,215,20,hWnd,(HMENU)14,NULL,NULL),WM_SETFONT,(WPARAM)hFont1,NULL);
 			
+			HWND hTmp;
+			HMODULE hModule=LoadLibrary("uxtheme.dll");
+			if(hModule){
+				typedef VOID (*SWT)(HWND,LPCWSTR,LPCWSTR);
+				SWT SetWindowTheme1=(SWT)GetProcAddress(hModule,"SetWindowTheme");
+				if(SetWindowTheme1){
+					for(int i=12;i<=14;i++){
+						hTmp=GetDlgItem(hWnd,i);
+						if(hTmp) SetWindowTheme1(hTmp,L"DarkMode_Explorer",NULL);
+					}
+					hTmp=GetDlgItem(hWnd,1);
+					if(hTmp) SetWindowTheme1(hTmp,L"DarkMode_Explorer",NULL);
+				}
+			}/*
+			hModule=LoadLibrary("dwmapi.dll");
+			if(hModule){
+				bool Dark=true;
+				DSWA DwmSetWindowAttribute1=(DSWA)GetProcAddress(hModule,"DwmSetWindowAttribute");
+				if(DwmSetWindowAttribute1) DwmSetWindowAttribute1(hWnd, 20,  &Dark, 4);
+			}*///If I enable this code, the progam will stop running.
 			//SendDlgItemMessage(hWND,0,WM_SETFONT,(WPARAM)hFont1,NULL);
 			break;
 		}
@@ -294,6 +355,23 @@ LRESULT CALLBACK WWatcherProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			ShowWindow(hWnd,SW_HIDE); 
 			return 0;
 		}
+		case WM_CTLCOLORBTN: 
+		case WM_CTLCOLORSTATIC:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORSCROLLBAR:{
+			static HBRUSH hbrBkgnd=NULL;
+	        HDC hdcStatic=(HDC)wParam;
+	        SetTextColor(hdcStatic, RGB(255,255,255));
+	        SetBkColor(hdcStatic, RGB(25,25,25));
+	    	if (hbrBkgnd==NULL){
+	            hbrBkgnd=CreateSolidBrush(RGB(25,25,25));
+	        }
+	        return (INT_PTR)hbrBkgnd;
+	        break;
+        }
 		default:return DefWindowProc(hWnd,msg,wParam,lParam);
 	}
 }
@@ -309,7 +387,7 @@ extern "C" DLLIMPORT void WinWatcher(){
 	memset(&wcexWW,0,sizeof(wcexWW));
 	wcexWW.cbSize=sizeof(wcexWW);
 	wcexWW.hInstance=hinst;
-	wcexWW.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);
+	wcexWW.hbrBackground=CreateSolidBrush(RGB(25,25,25));
 	wcexWW.hCursor=LoadCursor(NULL,IDC_ARROW);
 	//wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(wcexWW.hInstance,"IDI_WINWATCHER");
 	wcexWW.hIcon=wcexWW.hIconSm=LoadIcon(NULL,IDI_APPLICATION);

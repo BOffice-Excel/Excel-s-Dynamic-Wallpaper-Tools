@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "DynamicWallpaperTools"
-#define MyAppVersion "0.0.9.0"
+#define MyAppVersion "0.0.9.1"
 #define MyAppPublisher "Office-Excel"
 #define MyAppURL "https://boffice-excel.github.io/Website/DWPT/"
 #define MyAppExeName "DynamicWallpaperTools.exe"
@@ -71,6 +71,8 @@ Source: ".\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\HelpDWPT.dll"; DestDir: "{app}"; Flags: ignoreversion 
 Source: ".\WallpaperCore.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\Config.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\CheckUpdate.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\RunUpdate.bat"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -82,6 +84,7 @@ Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\Check Update"; Filename: "{app}\RunUpdate.bat"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
